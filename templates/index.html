@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Farevel</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+</head>
+<body>
+
+<header>
+  <div>Farevel</div>
+  <!-- Logout button in header -->
+  <div style="float: right;">
+    <form action="{{ url_for('logout') }}" method="get" style="display:inline;">
+      <button type="submit">Logout</button>
+    </form>
+  </div>
+</header>
+
+<main>
+  <p>Welcome, {{ username }}!</p>
+
+  <div>
+    <a href="{{ url_for('go_live') }}" class="btn">Go Live</a>
+</button>
+
+
+  </div>
+</main>
+
+<script src="{{ url_for('static', filename='index.js') }}"></script>
+</body>
+</html>
