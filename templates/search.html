@@ -1,0 +1,70 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/search.css') }}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+</head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Website</title>
+</head>
+<body>
+
+<div class="search-page">
+
+    <!-- Header -->
+    <div class="header">
+        <h2>Search</h2>
+    </div>
+
+    <!-- Search Bar -->
+    <div class="search-box">
+        <i class="fa-solid fa-magnifying-glass"></i>
+
+        <input
+            type="text"
+            id="searchInput"
+            placeholder="Search"
+            autocomplete="off">
+    </div>
+
+    <!-- Search Results -->
+    <div id="results">
+
+        <!-- Example User -->
+
+        <a href="/profile/srikanth" class="user">
+
+            <img src="{{ url_for('static', filename='images/default-profile.png') }}">
+
+            <div class="info">
+                <h4>srikanth</h4>
+            </div>
+
+        </a>
+
+        <a href="/profile/john" class="user">
+
+            <img src="{{ url_for('static', filename='images/default-profile.png') }}">
+
+            <div class="info">
+                <h4>john</h4>
+            
+            </div>
+
+        </a>
+
+    </div>
+
+</div>
+
+<script src="{{ url_for('static', filename='js/search.js') }}"></script>
+
+</body>
+</html>
+```

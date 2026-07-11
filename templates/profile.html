@@ -6,12 +6,20 @@
     <title>Profile</title>
 
     <link rel="stylesheet" href="{{ url_for('static', filename='css/profile.css') }}">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Website</title>
 </head>
 <body>
     <header class="top-bar">
-        <button class="search-btn">🔍</button>
-    </header>
-
+    {% if current_user_id == user.id %}
+        <button class="search-btn" onclick="location.href='/search'">
+            🔍
+        </button>
+    {% endif %}
+</header>
     <div class="profile-page">
 
         <!-- Profile Header -->
@@ -19,7 +27,7 @@
 
             <!-- Profile Picture -->
             <div class="profile-photo">
-                <img src="{{ url_for('static', filename='profile_pics/' + user.profile_photo) }}" alt="Profile Picture">
+               <img src="{{ url_for('static', filename='profile_pics/' + (user.profile_photo or 'default-profile.png')) }}" alt="Profile Picture">
             </div>
 
             <!-- Profile Info -->
@@ -31,9 +39,11 @@
                     {{ user.bio if user.bio else "No bio yet." }}
                 </p>
 
-                <button onclick="location.href='/edit-profile'">
-                    Edit Profile
-                </button>
+               {% if current_user_id == user.id %}
+    <button onclick="location.href='/edit-profile'">
+        Edit Profile
+    </button>
+    {% endif %}
 
             </div>
 

@@ -6,6 +6,10 @@
 
     <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
 </head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Website</title>
+</head>
 
 <body>
 
@@ -16,7 +20,7 @@
    
     <form method="POST" onsubmit="return validateLogin()">
 
-        <input type="text"name="identifier" placeholder="Username or Email">
+        <input type="text" id="identifier" name="identifier" placeholder="Username or Email">
         <input type="password" id="password" name="password" placeholder="Password">
 
         <button type="submit">Log In</button>

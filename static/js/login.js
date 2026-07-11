@@ -1,5 +1,5 @@
 function validateLogin() {
-    let contact = document.getElementById("contact").value.trim();
+    let contact = document.getElementById("identifier").value.trim();
     let password = document.getElementById("password").value.trim();
     let error = document.getElementById("error");
 

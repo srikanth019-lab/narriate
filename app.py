@@ -20,11 +20,13 @@ from werkzeug.security import generate_password_hash, check_password_hash
 # Optional (if you use timestamps in models)
 from datetime import datetime
 
-from flask import render_template
+from flask import render_template, request
 
 from flask import redirect
 
 from flask import session
+
+from flask import jsonify, request
 
 
 # =======================
@@ -81,93 +83,96 @@ def home():
     return redirect("/signup")
 
 
-@app.route('/signup', methods=['GET', 'POST'])
+@app.route("/signup", methods=["GET", "POST"])
 def signup():
 
-    if request.method == 'POST':
-        username = request.form.get('username')
-        contact = request.form.get('contact')  # phone OR email
-        password = request.form.get('password')
+    # OUTPUT
+    if request.method == "GET":
+        return render_template("signup.html")
 
-        # 🔴 1. Username must exist
-        if not username:
-            flash("Username is required")
-            return redirect('/signup')
+    # INPUT
+    username = request.form.get("username")
+    contact = request.form.get("contact")
+    password = request.form.get("password")
 
-        # 🔴 2. Password must exist
-        if not password:
-            flash("Password is required")
-            return redirect('/signup')
+    # CHECK
+    if not username:
+        flash("Username is required")
+        return redirect("/signup")
 
-        # 🔴 3. Contact must exist (phone OR email)
-        if not contact:
-            flash("Phone number or Email is required")
-            return redirect('/signup')
+    if not contact:
+        flash("Phone number or Email is required")
+        return redirect("/signup")
 
-        # 🔴 4. Detect email vs phone (basic logic)
-        email = None
-        phone = None
+    if not password:
+        flash("Password is required")
+        return redirect("/signup")
 
-        if "@" in contact:
-            email = contact
-        else:
-            phone = contact
+    # DECISION
+    email = None
+    phone = None
 
-        # 🔴 5. Check if already exists
-        existing_user = User.query.filter(
-            (User.username == username) |
-            (User.email == email) |
-            (User.phone == phone)
-        ).first()
+    if "@" in contact:
+        email = contact
+    else:
+        phone = contact
 
-        if existing_user:
-            flash("User already exists")
-            return redirect('/signup')
+    username_exists = User.query.filter_by(username=username).first()
+    email_exists = User.query.filter_by(email=email).first() if email else None
+    phone_exists = User.query.filter_by(phone=phone).first() if phone else None
 
-        # 🔴 6. Hash password
-        hashed_password = generate_password_hash(password)
+    if username_exists:
+        flash("Username already exists")
+        return redirect("/signup")
 
-        # 🔴 7. Save user
-        new_user = User(
-            username=username,
-            email=email,
-            phone=phone,
-            password_hash=hashed_password,
-        )
+    if email_exists:
+        flash("Email already exists")
+        return redirect("/signup")
 
-        db.session.add(new_user)
-        db.session.commit()
-        session["user_id"] = new_user.id
+    if phone_exists:
+        flash("Phone number already exists")
+        return redirect("/signup")
 
-        flash("Signup successful")
-        return redirect('/profile')
+    # ACTION
+    hashed_password = generate_password_hash(password)
 
-    return render_template('signup.html')
+    new_user = User(
+        username=username,
+        email=email,
+        phone=phone,
+        password_hash=hashed_password,
+        profile_photo="default-profile.png"
+    )
 
+    db.session.add(new_user)
+    db.session.commit()
+
+    session["user_id"] = new_user.id
+
+    # OUTPUT
+    flash("Signup successful")
+    return redirect("/profile")
 
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
 
-    # show login page
     if request.method == "GET":
         return render_template("login.html")
 
-    # handle login form
     identifier = request.form.get("identifier")
     password = request.form.get("password")
 
-    if not identifier or not password:
-        return "Missing credentials", 400
+    print("Identifier:", identifier)
 
-    # find user by username OR email
     user = User.query.filter(
         (User.username == identifier) |
         (User.email == identifier)
     ).first()
 
-    if not user: 
-        
+    print("User:", user)
+
+    if not user:
         return "User not found", 404
 
     if not user.check_password(password):
@@ -175,7 +180,6 @@ def login():
 
     session["user_id"] = user.id
     return redirect("/profile")
-
 
 
 @app.route("/profile")
@@ -197,9 +201,7 @@ def profile():
         return redirect("/login")
 
     # OUTPUT
-    return render_template("profile.html", user=user)  
-
-
+    return render_template("profile.html", user=user, current_user_id=user_id)
 
 
 @app.route("/edit-profile", methods=["GET", "POST"])
@@ -251,6 +253,62 @@ def edit_profile():
 
 
 
+
+@app.route("/search", methods=["GET"])
+def search():
+
+    # Get the text from the search box
+    query = request.args.get("q", "").strip()
+
+    users = []
+
+    # Only search if the user typed something
+    if query:
+        users = User.query.filter(
+            User.username.ilike(f"%{query}%")
+        ).all()
+
+    return render_template(
+        "search.html",
+        users=users,
+        query=query
+    )
+
+@app.route("/api/search")
+def api_search():
+
+    query = request.args.get("q", "").strip()
+
+    if not query:
+        return jsonify([])
+
+    users = User.query.filter(
+        User.username.ilike(f"%{query}%")
+    ).all()
+
+    return jsonify([
+        {
+            "username": user.username,
+            "bio": user.bio,
+           "profile_photo": user.profile_photo
+        }
+        for user in users
+    ])
+
+
+@app.route("/profile/<username>")
+def view_profile(username):
+
+    user = User.query.filter_by(username=username).first()
+
+    if not user:
+        return "User not found", 404
+
+    current_user_id = session.get("user_id")
+    return render_template("profile.html", user=user, current_user_id=current_user_id)
+
+
+
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=5000, debug=True)
     
