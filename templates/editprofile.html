@@ -1,0 +1,27 @@
+<form method="POST" enctype="multipart/form-data">
+
+    <!-- Profile Photo -->
+    <input
+        type="file"
+        name="profile_photo"
+        accept="image/*">
+    
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/editprofile.css') }}">
+    <!-- Username -->
+    <input
+        type="text"
+        name="username"
+        value="{{ user.username }}">
+
+    <!-- Bio -->
+    <textarea
+        name="bio">{{ user.bio }}</textarea>
+
+        <script src="{{ url_for('static', filename='js/editprofile.js') }}"></script>
+
+    <!-- Save -->
+    <button type="submit">
+        Save
+    </button>
+
+</form>

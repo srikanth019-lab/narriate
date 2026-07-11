@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/profile.css') }}">
+</head>
+<body>
+    <header class="top-bar">
+        <button class="search-btn">🔍</button>
+    </header>
+
+    <div class="profile-page">
+
+        <!-- Profile Header -->
+        <div class="profile-header">
+
+            <!-- Profile Picture -->
+            <div class="profile-photo">
+                <img src="{{ url_for('static', filename='profile_pics/' + user.profile_photo) }}" alt="Profile Picture">
+            </div>
+
+            <!-- Profile Info -->
+            <div class="profile-info">
+
+                <h2>@{{ user.username }}</h2>
+
+                <p class="bio">
+                    {{ user.bio if user.bio else "No bio yet." }}
+                </p>
+
+                <button onclick="location.href='/edit-profile'">
+                    Edit Profile
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <script src="{{ url_for('static', filename='js/profile.js') }}"></script>
+
+</body>
+</html>
