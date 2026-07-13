@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profile</title>
+    <title>Happstat - Profile</title>
 
     <link rel="stylesheet" href="{{ url_for('static', filename='css/profile.css') }}">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Your Website</title>
-</head>
+    <title>Happstat - Profile</title>
+</head> <div class="logo">Happstat</div>
 <body>
     <header class="top-bar">
     {% if current_user_id == user.id %}
@@ -20,7 +20,7 @@
         </button>
     {% endif %}
 </header>
-    <div class="profile-page">
+    <div class="profile-content">
 
         <!-- Profile Header -->
         <div class="profile-header">

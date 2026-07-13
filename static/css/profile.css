@@ -27,7 +27,28 @@ body{
     background:none;
     border:none;
     cursor:pointer;
+
+    }
+
+.logo {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+
+    font-size: 30px;
+    font-weight: 800;
+    font-family: Arial, sans-serif;
+    color: #6C4DFF;
+
+    letter-spacing: 1px;
+    text-align: center;
+    margin: 20px 0;
+    user-select: none;
+
+    z-index: 1000;
 }
+
+
 
 /* Profile */
 .profile-content{
