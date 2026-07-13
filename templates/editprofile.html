@@ -8,12 +8,7 @@
     
         <link rel="stylesheet" href="{{ url_for('static', filename='css/editprofile.css') }}">
 
-        <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Your Website</title>
-</head>
-    <!-- Username -->
+            <!-- Username -->
     <input
         type="text"
         name="username"
@@ -30,4 +25,9 @@
         Save
     </button>
 
-</form>
+
+
+<!-- Logout -->
+    <button type="button" id="logoutBtn">
+        Logout
+    </button><script src="{{ url_for('static', filename='js/logout.js') }}"></script>

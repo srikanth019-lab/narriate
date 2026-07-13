@@ -28,6 +28,10 @@ from flask import session
 
 from flask import jsonify, request
 
+from flask import session, redirect
+
+from flask import session, redirect, url_for
+
 
 # =======================
 # 2️⃣ CONFIG
@@ -179,7 +183,7 @@ def login():
         return "Invalid password", 401
 
     session["user_id"] = user.id
-    return redirect("/profile")
+    return redirect(url_for("profile"))
 
 
 @app.route("/profile")
@@ -191,14 +195,14 @@ def profile():
     # DECISION
     if not user_id:
         flash("Please log in first.")
-        return redirect("/login")
+        return redirect(url_for("login"))
 
     # ACTION
     user = User.query.get(user_id)
 
     if not user:
         flash("User not found.")
-        return redirect("/login")
+        return redirect(url_for("login"))
 
     # OUTPUT
     return render_template("profile.html", user=user, current_user_id=user_id)
@@ -213,7 +217,7 @@ def edit_profile():
     # CHECK
     if not user_id:
         flash("Please log in first.")
-        return redirect("/login")
+        return redirect(url_for("login"))
 
     user = User.query.get(user_id)
 
@@ -308,7 +312,12 @@ def view_profile(username):
     return render_template("profile.html", user=user, current_user_id=current_user_id)
 
 
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect(url_for("login"))
+
+
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
-    
+    app.run(debug=True)

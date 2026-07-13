@@ -80,3 +80,24 @@ input[type="file"]{
 .save-btn:hover{
     background:#0077cc;
 }
+
+#logoutBtn {
+    width: 100%;
+    padding: 12px;
+    background: #0095f6;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+#logoutBtn:hover {
+    background: #0077cc;
+    transform: translateY(-2px);
+}
+
+#logoutBtn:active {
+    transform: scale(0.97);
+}
