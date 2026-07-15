@@ -24,9 +24,10 @@ body{
 
 .search-btn{
     font-size: 28px;
-    background:none;
+    background:transparent;
     border:none;
     cursor:pointer;
+    color: #ffffff;
 
     }
 
