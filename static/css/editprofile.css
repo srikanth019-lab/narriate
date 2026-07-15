@@ -71,30 +71,30 @@ input[type="file"]{
     padding: 10px 15px;
     border:none;
     border-radius:8px;
-    background:#0095f6;
+    background:#4db2f0;
     color:white;
     font-size:16px;
     cursor:pointer;
 }
 
 .save-btn:hover{
-    background:#0077cc;
+    background:#4a7b9f;
 }
 
 #logoutBtn {
     width: 100%;
     padding: 10px 15px;
-    background: #0095f6;
+    background: #4a7b9f;
     color: white;
     border: none;
-    border-radius: 8px;
+    border-radius: 10px;
     font-size: 16px;
     cursor: pointer;
     transition: 0.3s ease;
 }
 
 #logoutBtn:hover {
-    background: #0077cc;
+    background: #4a7b9f;
     transform: translateY(-2px);
 }
 
