@@ -27,8 +27,7 @@ searchInput.addEventListener("input", async function () {
 
             results.innerHTML += `
                 <a href="/profile/${user.username}" class="user">
-                    <img src="${user.profile_pic}" alt="Profile">
-
+                  <img src="/static/profile_pics/${user.profile_photo}" alt="Profile">
                     <div class="info">
                         <h4>${user.username}</h4>
                         <p>${user.bio || ""}</p>

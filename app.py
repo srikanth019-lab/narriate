@@ -294,7 +294,8 @@ def api_search():
         {
             "username": user.username,
             "bio": user.bio,
-           "profile_photo": user.profile_photo
+            "profile_photo": user.profile_photo,
+            "url": f"/profile/{user.username}"
         }
         for user in users
     ])
