@@ -1,6 +1,12 @@
 # =======================
 # 1️⃣ IMPORTS
 # =======================
+
+from fileinput import filename
+
+import cloudinary
+import cloudinary.uploader
+
 # Flask core
 from typing import Any
 
@@ -33,6 +39,8 @@ from flask import session, redirect
 from flask import session, redirect, url_for
 
 
+
+
 # =======================
 # 2️⃣ CONFIG
 # =======================
@@ -44,6 +52,15 @@ app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL")
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 db = SQLAlchemy(app)
+
+
+
+cloudinary.config(
+    cloud_name="gxy7cvmb",
+    api_key="365885744375553",
+    api_secret="7GVD_RcUAVEoeTZPodw9Ru8wVus",
+    secure=True
+)
 
 
 
@@ -241,10 +258,15 @@ def edit_profile():
         # ACTION
         user.username = username
         user.bio = bio
-        
+
         if profile_photo:
-            profile_photo.save(f"static/profile_pics/{user.id}.png")
-            user.profile_photo = f"{user.id}.png"
+            result = cloudinary.uploader.upload(
+                profile_photo,
+                folder="profile_pics",
+                public_id=str(user.id),
+                overwrite=True
+            )
+            user.profile_photo = result["secure_url"]
 
         db.session.commit()
 
@@ -254,8 +276,6 @@ def edit_profile():
 
     # OUTPUT
     return render_template("editprofile.html", user=user)
-
-
 
 
 @app.route("/search", methods=["GET"])
