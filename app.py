@@ -93,6 +93,18 @@ with app.app_context():
     
  db.create_all()
 
+ class Emoji(db.Model):
+    __tablename__ = "emoji"
+
+    id = db.Column(db.Integer, primary_key=True)
+    emoji = db.Column(db.String(10), nullable=False)
+    name = db.Column(db.String(100), nullable=False)
+    category = db.Column(db.String(100), nullable=True)
+    keywords = db.Column(db.Text, nullable=True)
+
+
+with app.app_context():
+    db.create_all()
 # =======================
 # 4️⃣ ROUTES
 # =======================
@@ -337,6 +349,29 @@ def view_profile(username):
 def logout():
     session.clear()
     return redirect(url_for("login"))
+
+
+@app.route("/api/emojis")
+def search_emojis():
+
+    query = request.args.get("q", "")
+
+    if not query:
+        return jsonify([])
+
+    emojis = Emoji.query.filter(
+        Emoji.keywords.ilike(f"%{query}%")
+    ).limit(20).all()
+
+    results = []
+
+    for item in emojis:
+        results.append({
+            "emoji": item.emoji,
+            "name": item.name
+        })
+
+    return jsonify(results)
 
 
 
