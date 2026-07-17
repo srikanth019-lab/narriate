@@ -105,3 +105,15 @@ body{
 .edit-btn:hover{
     background:#7096b2;
 }
+
+.emoji-search-box {
+    width: calc(100% - 40px);
+    margin-top: 20px;
+    margin-left: 20px;   /* Same as the logo */
+}
+
+#emojiSearch {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 12px;
+}

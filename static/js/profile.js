@@ -52,6 +52,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
         });
 
+
     });
 
 });
+
+emojiDiv.className = "emoji-item";

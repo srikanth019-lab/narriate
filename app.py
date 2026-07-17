@@ -47,6 +47,8 @@ from flask import session, redirect, url_for
 app = Flask(__name__)
 load_dotenv()
 
+print("DATABASE_URL =", os.getenv("DATABASE_URL"))
+
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
 app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL")
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False

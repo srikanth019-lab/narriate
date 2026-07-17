@@ -6,15 +6,14 @@
     <title>Happstat - Profile</title>
 
     <link rel="stylesheet" href="{{ url_for('static', filename='css/profile.css') }}">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Happstat - Profile</title>
     
-</head> <div class="logo">Happstat</div>
+</head>
+
 <body>
-    <header class="top-bar">
+
+<div class="logo">Happstat</div>
+
+<header class="top-bar">
     {% if current_user_id == user.id %}
         <button class="search-btn" onclick="location.href='/search'">
             ⌕
@@ -49,6 +48,17 @@
     </button>
     {% endif %}
 
+
+    <div class="emoji-search-box">
+
+    <input 
+        type="text" 
+        id="emojiSearch"
+        placeholder="Search emoji...">
+    <div id="emojiResults"></div>
+
+</div>
+
             </div>
 
         </div>
@@ -59,14 +69,3 @@
 
 </body>
 </html>
-<!-- Emoji Search -->
-<div class="emoji-search-box">
-
-    <input 
-        type="text" 
-        id="emojiSearch"
-        placeholder="Search emoji...">
-
-    <div id="emojiResults"></div>
-
-</div>
