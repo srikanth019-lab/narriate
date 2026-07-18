@@ -38,6 +38,8 @@ from flask import session, redirect
 
 from flask import session, redirect, url_for
 
+from datetime import timedelta
+
 
 
 
@@ -48,6 +50,7 @@ app = Flask(__name__)
 load_dotenv()
 
 print("DATABASE_URL =", os.getenv("DATABASE_URL"))
+app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(days=30)
 
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
 app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL")
@@ -115,7 +118,10 @@ with app.app_context():
 
 @app.route("/")
 def home():
-    return redirect("/signup")
+    if "user_id" in session:
+        return redirect(url_for("profile"))
+    return redirect(url_for("login"))
+
 
 
 @app.route("/signup", methods=["GET", "POST"])
@@ -183,6 +189,7 @@ def signup():
     db.session.commit()
 
     session["user_id"] = new_user.id
+    session.permanent = True
 
     # OUTPUT
     flash("Signup successful")
@@ -214,7 +221,10 @@ def login():
         return "Invalid password", 401
 
     session["user_id"] = user.id
+    session.permanent = True
+
     return redirect(url_for("profile"))
+
 
 
 @app.route("/profile")

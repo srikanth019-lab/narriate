@@ -109,7 +109,8 @@ body{
 .emoji-search-box {
     width: calc(100% - 40px);
     margin-top: 20px;
-    margin-left: 20px;   /* Same as the logo */
+    margin-left: 20px; 
+    text-align: left;  /* Same as the logo */
 }
 
 #emojiSearch {
