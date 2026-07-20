@@ -363,9 +363,15 @@ def logout():
     return redirect(url_for("login"))
 
 
-@app.route("/api/emojis")
-def search_emojis():
 
+@app.route("/emojis-search")
+def emojis_search_page():
+    return render_template("emojis search.html")
+
+
+
+@app.route("/api/emojis-search")
+def api_emojis_search():
     query = request.args.get("q", "")
 
     if not query:

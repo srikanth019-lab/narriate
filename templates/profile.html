@@ -32,7 +32,7 @@
                 {% else %}
                     <img src="{{ url_for('static', filename='images/default_profile.png') }}" alt="Default Profile Photo">
                 {% endif %}
-
+               </div>
             <!-- Profile Info -->
             <div class="profile-info">
 
@@ -48,14 +48,13 @@
     </button>
     {% endif %}
 
+{% if current_user_id == user.id %}
+<div class="search-bar" onclick="window.location.href='/emojis-search'">
+    🔍 Search emojis...
+</div>
+{% endif %}
 
-    <div class="emoji-search-box">
-
-    <input 
-        type="text" 
-        id="emojiSearch"
-        placeholder="Search emoji...">
-    <div id="emojiResults"></div>
+ 
 
 </div>
 
@@ -63,9 +62,7 @@
 
 </div>
 
-</div>
-
-    <script src="{{ url_for('static', filename='js/profile.js') }}"></script>
+   <script src="{{ url_for('static', filename='js/profile.js') }}"></script>
 
 </body>
 </html>
