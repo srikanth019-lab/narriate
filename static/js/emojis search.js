@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const searchInput = document.getElementById("emojiSearch");
     const results = document.getElementById("emojiResults");
 
-    if (!searchInput) return;
+    if (!searchInput || !results) return;
 
     searchInput.addEventListener("input", async () => {
 
@@ -14,29 +14,23 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        const response = await fetch(`/api/emojis-search?q=${query}`);
+        const response = await fetch(`/api/emojis-search?q=${encodeURIComponent(query)}`);
         const emojis = await response.json();
 
         results.innerHTML = "";
 
         emojis.forEach(item => {
-
             const button = document.createElement("button");
-
+            button.className = "emoji-item";
             button.textContent = item.emoji;
             button.title = item.name;
-
+            button.onclick = () => {
+                window.location.href = `/emoji/${item.id}`;
+            };
             results.appendChild(button);
-
         });
-
 
     });
 
 });
 
-const btn = document.createElement("button");
-btn.className = "emoji-item";
-btn.textContent = emoji.emoji;
-
-emojiResults.appendChild(btn);

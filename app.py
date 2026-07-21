@@ -2,18 +2,20 @@
 # 1️⃣ IMPORTS
 # =======================
 
-from fileinput import filename
+from typing import Any
+from datetime import datetime, timedelta
 
 import cloudinary
 import cloudinary.uploader
 
 # Flask core
-from typing import Any
-
-from flask import Flask, flash, request, jsonify, session
+from flask import Flask, flash, request, jsonify, session, render_template, redirect, url_for
 
 # Database
 from flask_sqlalchemy import SQLAlchemy
+
+# Flask-Login
+from functools import wraps
 
 # Environment variables
 from dotenv import load_dotenv
@@ -22,23 +24,6 @@ import os
 # Security (password hashing)
 from werkzeug.datastructures.file_storage import FileStorage
 from werkzeug.security import generate_password_hash, check_password_hash
-
-# Optional (if you use timestamps in models)
-from datetime import datetime
-
-from flask import render_template, request
-
-from flask import redirect
-
-from flask import session
-
-from flask import jsonify, request
-
-from flask import session, redirect
-
-from flask import session, redirect, url_for
-
-from datetime import timedelta
 
 
 
@@ -95,21 +80,28 @@ class User(db.Model):
         return check_password_hash(self.password_hash, password)
 
 with app.app_context():
-    
- db.create_all()
+    class Emoji(db.Model):
+        __tablename__ = "emoji"
 
- class Emoji(db.Model):
-    __tablename__ = "emoji"
+        id = db.Column(db.Integer, primary_key=True)
+        emoji = db.Column(db.String(10), nullable=False)
+        name = db.Column(db.String(100), nullable=False)
+        category = db.Column(db.String(100), nullable=True)
+        keywords = db.Column(db.Text, nullable=True)
 
-    id = db.Column(db.Integer, primary_key=True)
-    emoji = db.Column(db.String(10), nullable=False)
-    name = db.Column(db.String(100), nullable=False)
-    category = db.Column(db.String(100), nullable=True)
-    keywords = db.Column(db.Text, nullable=True)
+    class EmojiPost(db.Model):
+        __tablename__ = "posts"
 
+        id = db.Column(db.Integer, primary_key=True)
+        emoji_id = db.Column(db.Integer, db.ForeignKey("emoji.id"), nullable=False)
+        content = db.Column(db.Text, nullable=True)
+        created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
-with app.app_context():
+        emoji = db.relationship("Emoji", backref=db.backref("posts", lazy=True))
+
     db.create_all()
+
+
 # =======================
 # 4️⃣ ROUTES
 # =======================
@@ -385,16 +377,27 @@ def api_emojis_search():
 
     for item in emojis:
         results.append({
-            "emoji": item.emoji,
-            "name": item.name
-        })
+            "id": item.id,
+        "emoji": item.emoji,
+        "name": item.name
+    })
+        
 
     return jsonify(results)
 
 
-@app.route("/emoji/<path:emoji>")
-def emoji_gallery(emoji):
-    return render_template("emoji gallery.html", emoji=emoji, emoji_name="Emoji"
+    
+
+@app.route("/emoji/<int:emoji_id>")
+def emoji_gallery(emoji_id):
+    emoji = Emoji.query.get_or_404(emoji_id)
+
+    posts = EmojiPost.query.filter_by(emoji_id=emoji.id).all()
+
+    return render_template(
+        "emoji gallery.html",
+        emoji=emoji,
+        posts=posts
     )
 
 

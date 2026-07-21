@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emoji Gallery</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/emoji gallery.css') }}">
+</head>
+<body>
+
+<div class="container">
+
+    <!-- Top Bar -->
+    <header class="top-bar">
+
+        <a href="{{ url_for('emojis_search_page') }}" class="back-btn">
+            ←
+        </a>
+
+        <div class="emoji-info">
+            <span class="emoji">😊</span>
+            <span class="emoji-name">Happy</span>
+        </div>
+
+        <a href="#" class="add-btn">
+            ＋
+        </a>
+
+    </header>
+
+    <!-- Post Count -->
+    <div class="post-count">
+        <strong>27</strong> Posts
+    </div>
+
+    <!-- Gallery -->
+    <div class="gallery-grid">
+
+        <div class="gallery-item">
+            <img src="https://placehold.co/300x300" alt="">
+        </div>
+
+        <div class="gallery-item">
+            <img src="https://placehold.co/300x300" alt="">
+        </div>
+
+        <div class="gallery-item">
+            <img src="https://placehold.co/300x300" alt="">
+        </div>
+
+        <div class="gallery-item">
+            <img src="https://placehold.co/300x300" alt="">
+        </div>
+
+        <div class="gallery-item">
+            <img src="https://placehold.co/300x300" alt="">
+        </div>
+
+        <div class="gallery-item">
+            <img src="https://placehold.co/300x300" alt="">
+        </div>
+
+        <div class="gallery-item">
+            <img src="https://placehold.co/300x300" alt="">
+        </div>
+
+        <div class="gallery-item">
+            <img src="https://placehold.co/300x300" alt="">
+        </div>
+
+        <div class="gallery-item">
+            <img src="https://placehold.co/300x300" alt="">
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>
