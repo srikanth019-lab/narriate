@@ -35,4 +35,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 });
 
-emojiDiv.className = "emoji-item";
+const btn = document.createElement("button");
+btn.className = "emoji-item";
+btn.textContent = emoji.emoji;
+
+emojiResults.appendChild(btn);

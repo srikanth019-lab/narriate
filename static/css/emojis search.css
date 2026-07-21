@@ -10,3 +10,21 @@
     box-sizing: border-box;
     padding: 12px;
 }
+
+.emoji-item {
+    width: 56px;
+    height: 56px;
+    font-size: 38px;
+    border: none;
+    background: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.emoji-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(56px, 1fr));
+    gap: 8px;
+}

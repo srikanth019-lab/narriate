@@ -392,6 +392,12 @@ def api_emojis_search():
     return jsonify(results)
 
 
+@app.route("/emoji/<path:emoji>")
+def emoji_gallery(emoji):
+    return render_template("emoji gallery.html", emoji=emoji, emoji_name="Emoji"
+    )
+
+
 
 if __name__ == "__main__":
     app.run(debug=True)
