@@ -19,61 +19,53 @@
         </a>
 
         <div class="emoji-info">
-            <span class="emoji">😊</span>
-            <span class="emoji-name">Happy</span>
+            <span class="emoji">{{ emoji.emoji }}</span>
+            <span class="emoji-name">{{ emoji.name }}</span>
         </div>
 
-        <a href="#" class="add-btn">
-            ＋
-        </a>
+       <form
+    action="{{ url_for('emoji_gallery', emoji_id=emoji.id) }}"
+    method="POST"
+    enctype="multipart/form-data"
+    id="uploadForm"
+>
+
+    <input
+        type="file"
+        id="imageInput"
+        name="image"
+        hidden
+        onchange="document.getElementById('uploadForm').submit();"
+    >
+
+    <button
+        type="button"
+        class="add-btn"
+        onclick="document.getElementById('imageInput').click();"
+    >
+        ＋
+    </button>
+
+</form>
 
     </header>
 
     <!-- Post Count -->
     <div class="post-count">
-        <strong>27</strong> Posts
+        <strong>{{ posts|length }}</strong> Posts
     </div>
 
     <!-- Gallery -->
+
     <div class="gallery-grid">
 
-        <div class="gallery-item">
-            <img src="https://placehold.co/300x300" alt="">
-        </div>
-
-        <div class="gallery-item">
-            <img src="https://placehold.co/300x300" alt="">
-        </div>
-
-        <div class="gallery-item">
-            <img src="https://placehold.co/300x300" alt="">
-        </div>
-
-        <div class="gallery-item">
-            <img src="https://placehold.co/300x300" alt="">
-        </div>
-
-        <div class="gallery-item">
-            <img src="https://placehold.co/300x300" alt="">
-        </div>
-
-        <div class="gallery-item">
-            <img src="https://placehold.co/300x300" alt="">
-        </div>
-
-        <div class="gallery-item">
-            <img src="https://placehold.co/300x300" alt="">
-        </div>
-
-        <div class="gallery-item">
-            <img src="https://placehold.co/300x300" alt="">
-        </div>
-
-        <div class="gallery-item">
-            <img src="https://placehold.co/300x300" alt="">
-        </div>
-
+    {% for post in posts %}
+    <div class="gallery-item">
+        <img src="{{ post.image_url }}" alt="">
     </div>
+    {% endfor %}
+
+</div>
 
 </div>
 

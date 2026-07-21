@@ -25,6 +25,9 @@ import os
 from werkzeug.datastructures.file_storage import FileStorage
 from werkzeug.security import generate_password_hash, check_password_hash
 
+from flask_migrate import Migrate
+
+from flask import request, redirect, url_for
 
 
 
@@ -42,6 +45,7 @@ app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL")
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 db = SQLAlchemy(app)
+migrate = Migrate(app, db)
 
 
 
@@ -79,28 +83,45 @@ class User(db.Model):
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
+
+class Emoji(db.Model):
+    __tablename__ = "emoji"
+
+    id = db.Column(db.Integer, primary_key=True)
+    emoji = db.Column(db.String(10), nullable=False)
+    name = db.Column(db.String(100), nullable=False)
+    category = db.Column(db.String(100), nullable=True)
+    keywords = db.Column(db.Text, nullable=True)
+
+
+class EmojiPost(db.Model):
+    __tablename__ = "posts"
+
+    id = db.Column(db.Integer, primary_key=True)
+
+    emoji_id = db.Column(
+        db.Integer,
+        db.ForeignKey("emoji.id"),
+        nullable=False
+    )
+
+    image_url = db.Column(db.String(500), nullable=False)
+
+    content = db.Column(db.Text, nullable=True)
+
+    created_at = db.Column(
+        db.DateTime,
+        default=datetime.utcnow
+    )
+
+    emoji = db.relationship(
+        "Emoji",
+        backref=db.backref("posts", lazy=True)
+    )
+
+
 with app.app_context():
-    class Emoji(db.Model):
-        __tablename__ = "emoji"
-
-        id = db.Column(db.Integer, primary_key=True)
-        emoji = db.Column(db.String(10), nullable=False)
-        name = db.Column(db.String(100), nullable=False)
-        category = db.Column(db.String(100), nullable=True)
-        keywords = db.Column(db.Text, nullable=True)
-
-    class EmojiPost(db.Model):
-        __tablename__ = "posts"
-
-        id = db.Column(db.Integer, primary_key=True)
-        emoji_id = db.Column(db.Integer, db.ForeignKey("emoji.id"), nullable=False)
-        content = db.Column(db.Text, nullable=True)
-        created_at = db.Column(db.DateTime, default=datetime.utcnow)
-
-        emoji = db.relationship("Emoji", backref=db.backref("posts", lazy=True))
-
     db.create_all()
-
 
 # =======================
 # 4️⃣ ROUTES
@@ -388,9 +409,27 @@ def api_emojis_search():
 
     
 
-@app.route("/emoji/<int:emoji_id>")
+
+
+@app.route("/emoji/<int:emoji_id>", methods=["GET", "POST"])
 def emoji_gallery(emoji_id):
     emoji = Emoji.query.get_or_404(emoji_id)
+
+    if request.method == "POST":
+        image = request.files.get("image")
+
+        # PASTE THE NEW CODE HERE
+        result = cloudinary.uploader.upload(image)
+
+        new_post = EmojiPost(
+            emoji_id=emoji.id,
+            image_url=result["secure_url"]
+        )
+
+        db.session.add(new_post)
+        db.session.commit()
+
+        return redirect(url_for("emoji_gallery", emoji_id=emoji.id))
 
     posts = EmojiPost.query.filter_by(emoji_id=emoji.id).all()
 
@@ -399,7 +438,6 @@ def emoji_gallery(emoji_id):
         emoji=emoji,
         posts=posts
     )
-
 
 
 if __name__ == "__main__":
