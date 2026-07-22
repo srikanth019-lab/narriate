@@ -420,6 +420,9 @@ def emoji_gallery(emoji_id):
 
         if not file:
             return redirect(url_for("emoji_gallery", emoji_id=emoji.id))
+        
+        print("Filename:", file.filename)
+        print("Mimetype:", file.mimetype)
 
         # Detect media type
         if file.mimetype.startswith("image/"):

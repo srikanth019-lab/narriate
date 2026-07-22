@@ -67,11 +67,14 @@
             <img src="{{ post.image_url }}" alt="">
         </a>
         {% elif post.media_type == "video" %}
-            <video controls>
-                <source src="{{ post.image_url }}" type="video/mp4">
-            </video>
+              <a href="{{ url_for('view_post', post_id=post.id) }}">
+    <video class="gallery-video" muted>
+        <source src="{{ post.image_url }}" type="video/mp4">
+    </video>
+    </a>
         {% endif %}
     </div>
+
     {% endfor %}
 
 </div>
