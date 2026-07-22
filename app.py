@@ -455,5 +455,10 @@ def emoji_gallery(emoji_id):
         posts=posts
     )
 
+@app.route("/post/<int:post_id>")
+def view_post(post_id):
+    post = EmojiPost.query.get_or_404(post_id)
+    return render_template("view post.html", post=post)
+
 if __name__ == "__main__":
     app.run(debug=True)

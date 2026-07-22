@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>View Image</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/view post.css') }}">
+</head>
+<body>
+
+<a class="close-btn" href="javascript:history.back()">✕</a>
+
+<p style="color:white;word-break:break-all;">
+
+</p>
+
+
+<img src="{{ post.image_url }}" class="full-image">
+
+</body>
+</html>
