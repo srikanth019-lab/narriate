@@ -108,7 +108,7 @@ class EmojiPost(db.Model):
     image_url = db.Column(db.String(500), nullable=False)
 
     content = db.Column(db.Text, nullable=True)
-
+    media_type = db.Column(db.String(10), nullable=False)
     created_at = db.Column(
         db.DateTime,
         default=datetime.utcnow
@@ -416,14 +416,30 @@ def emoji_gallery(emoji_id):
     emoji = Emoji.query.get_or_404(emoji_id)
 
     if request.method == "POST":
-        image = request.files.get("image")
+        file = request.files.get("image")
 
-        # PASTE THE NEW CODE HERE
-        result = cloudinary.uploader.upload(image)
+        if not file:
+            return redirect(url_for("emoji_gallery", emoji_id=emoji.id))
 
+        # Detect media type
+        if file.mimetype.startswith("image/"):
+            media_type = "image"
+        elif file.mimetype.startswith("video/"):
+            media_type = "video"
+        else:
+            return "Unsupported file type", 400
+
+        # Upload to Cloudinary
+        result = cloudinary.uploader.upload(
+            file,
+            resource_type="auto"
+        )
+
+        # Save in database
         new_post = EmojiPost(
             emoji_id=emoji.id,
-            image_url=result["secure_url"]
+            image_url=result["secure_url"],
+            media_type=media_type
         )
 
         db.session.add(new_post)
@@ -438,7 +454,6 @@ def emoji_gallery(emoji_id):
         emoji=emoji,
         posts=posts
     )
-
 
 if __name__ == "__main__":
     app.run(debug=True)
