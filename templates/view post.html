@@ -10,7 +10,25 @@
 
 <body>
 
-<a class="close-btn" href="javascript:history.back()">✕</a>
+<div class="top-actions">
+
+    <a class="close-btn" href="javascript:history.back()">✕</a>
+
+    <div class="post-menu">
+
+        <button class="dots-btn">⋮</button>
+
+        <div class="menu-options">
+            <form action="{{ url_for('delete_post', post_id=current_post.id) }}" method="POST">
+                <button type="submit" class="delete-btn">
+                    Delete
+                </button>
+            </form>
+        </div>
+
+    </div>
+
+</div>
 
 <div class="post-feed">
 
@@ -30,7 +48,9 @@
 
 {% endif %}
 
-</div>
+
+    </div>
+
 
 {% endfor %}
 

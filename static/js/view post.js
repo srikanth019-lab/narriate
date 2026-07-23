@@ -36,3 +36,20 @@ feed.addEventListener("scroll", () => {
         isScrolling = true;
     }
 });
+
+
+
+document.querySelectorAll(".dots-btn").forEach(button => {
+
+    button.addEventListener("click", () => {
+
+        const menu = button.nextElementSibling;
+
+        menu.style.display =
+            menu.style.display === "block"
+            ? "none"
+            : "block";
+
+    });
+
+});

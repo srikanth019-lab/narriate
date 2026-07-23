@@ -1,7 +1,7 @@
 # =======================
 # 1️⃣ IMPORTS
 # =======================
-
+from flask import abort
 from ast import If
 from typing import Any
 from datetime import datetime, timedelta
@@ -15,8 +15,6 @@ from flask import Flask, flash, request, jsonify, session, render_template, redi
 # Database
 from flask_sqlalchemy import SQLAlchemy
 
-# Flask-Login
-from functools import wraps
 
 # Environment variables
 from dotenv import load_dotenv
@@ -465,6 +463,11 @@ def emoji_gallery(emoji_id):
             media_type=media_type
         )
 
+
+        print("Session user_id:", session.get("user_id"))
+        print("New post user_id:", new_post.user_id)
+
+
         db.session.add(new_post)
         db.session.commit()
 
@@ -486,6 +489,32 @@ def view_post(post_id):
     posts = EmojiPost.query.filter_by(emoji_id=post.emoji_id).all()
 
     return render_template("view post.html", posts=posts, current_post=post)
+
+
+
+
+@app.route("/post/<int:post_id>/delete", methods=["POST"])
+def delete_post(post_id):
+
+    user_id = session.get("user_id")
+    post = EmojiPost.query.get_or_404(post_id)
+
+    print("Session user_id:", user_id)
+    print("Post user_id:", post.user_id)
+
+    if not user_id:
+        flash("Please log in first.")
+        return redirect(url_for("login"))
+
+    if post.user_id != user_id:
+        abort(403)
+
+    emoji_id = post.emoji_id
+
+    db.session.delete(post)
+    db.session.commit()
+
+    return redirect(url_for("emoji_gallery", emoji_id=emoji_id))
 
 
 if __name__ == "__main__":

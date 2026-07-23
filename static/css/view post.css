@@ -1,6 +1,6 @@
 body {
-    margin:0;
-    background:black;
+    margin: 0;
+    background: black;
     overflow: hidden;
 }
 
@@ -14,20 +14,71 @@ body {
 .post-item {
     height: 100vh;
     scroll-snap-align: start;
-    scroll-snap-stop: always;
-}
-.full-image {
-    width:100%;
-    height:100%;
-    object-fit:contain;
 }
 
+.full-image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+
+/* Top X and three dots */
+
+.top-actions {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+
 .close-btn {
-    position:fixed;
-    top:20px;
-    right:20px;
-    z-index:10;
-    color:white;
-    font-size:30px;
-    text-decoration:none;
+    color: white;
+    font-size: 30px;
+    text-decoration: none;
+}
+
+
+.dots-btn {
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 35px;
+    cursor: pointer;
+}
+
+
+/* Delete menu */
+
+.post-menu {
+    position: relative;
+}
+
+
+.menu-options {
+    display: none;
+
+    position: absolute;
+    right: 0;
+    top: 45px;
+
+    background: white;
+    border-radius: 8px;
+    padding: 8px;
+}
+
+
+.delete-btn {
+    background: transparent;
+    border: none;
+
+    color: red;
+    font-size: 16px;
+    cursor: pointer;
+    padding: 8px 15px;
 }
