@@ -24,7 +24,7 @@
 
 {% elif post.media_type == "video" %}
 
-    <video class="full-image" autoplay muted loop playsinline onclick="toggleSound(this)">
+    <video class="full-image"  playsinline loop>
         <source src="{{ post.image_url }}" type="video/mp4">
     </video>
 
