@@ -24,7 +24,7 @@
 
 {% elif post.media_type == "video" %}
 
-    <video class="full-image" autoplay muted loop playsinline>
+    <video class="full-image" autoplay muted loop playsinline onclick="toggleSound(this)">
         <source src="{{ post.image_url }}" type="video/mp4">
     </video>
 
@@ -34,15 +34,15 @@
 
 {% endfor %}
 
-</div><script>
+</div>
+
+<script>
 window.onload = function() {
-
-    document.getElementById(
-        "post-{{ current_post.id }}"
-    ).scrollIntoView();
-
-}
+    document.getElementById("post-{{ current_post.id }}").scrollIntoView();
+};
 </script>
+
+<script src="{{ url_for('static', filename='js/view post.js') }}"></script>
 
 </body>
 </html>
