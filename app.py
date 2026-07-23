@@ -2,6 +2,7 @@
 # 1️⃣ IMPORTS
 # =======================
 
+from ast import If
 from typing import Any
 from datetime import datetime, timedelta
 
@@ -104,6 +105,12 @@ class EmojiPost(db.Model):
         db.ForeignKey("emoji.id"),
         nullable=False
     )
+
+    user_id = db.Column(
+    db.Integer,
+    db.ForeignKey("user.id"),
+    nullable=False
+)
 
     image_url = db.Column(db.String(500), nullable=False)
 
@@ -244,7 +251,7 @@ def login():
 def profile():
 
     # CHECK
-    user_id =session.get("user_id")
+    user_id = session.get("user_id")
 
     # DECISION
     if not user_id:
@@ -258,8 +265,24 @@ def profile():
         flash("User not found.")
         return redirect(url_for("login"))
 
-    # OUTPUT
-    return render_template("profile.html", user=user, current_user_id=user_id)
+    emoji_counts = (
+        db.session.query(
+            Emoji.id,
+            Emoji.emoji,
+            db.func.count(EmojiPost.id).label("post_count")
+        )
+        .join(EmojiPost, Emoji.id == EmojiPost.emoji_id)
+        .filter(EmojiPost.user_id == user_id)
+        .group_by(Emoji.id, Emoji.emoji)
+        .all()
+    )
+
+    return render_template(
+        "profile.html",
+        user=user,
+        current_user_id=user_id,
+        emoji_counts=emoji_counts
+    )
 
 
 @app.route("/edit-profile", methods=["GET", "POST"])
@@ -407,10 +430,6 @@ def api_emojis_search():
     return jsonify(results)
 
 
-    
-
-
-
 @app.route("/emoji/<int:emoji_id>", methods=["GET", "POST"])
 def emoji_gallery(emoji_id):
     emoji = Emoji.query.get_or_404(emoji_id)
@@ -420,7 +439,7 @@ def emoji_gallery(emoji_id):
 
         if not file:
             return redirect(url_for("emoji_gallery", emoji_id=emoji.id))
-        
+
         print("Filename:", file.filename)
         print("Mimetype:", file.mimetype)
 
@@ -440,6 +459,7 @@ def emoji_gallery(emoji_id):
 
         # Save in database
         new_post = EmojiPost(
+            user_id=session["user_id"],
             emoji_id=emoji.id,
             image_url=result["secure_url"],
             media_type=media_type
@@ -450,6 +470,7 @@ def emoji_gallery(emoji_id):
 
         return redirect(url_for("emoji_gallery", emoji_id=emoji.id))
 
+ # This runs for GET requests
     posts = EmojiPost.query.filter_by(emoji_id=emoji.id).all()
 
     return render_template(
@@ -457,6 +478,7 @@ def emoji_gallery(emoji_id):
         emoji=emoji,
         posts=posts
     )
+    
 
 @app.route("/post/<int:post_id>")
 def view_post(post_id):

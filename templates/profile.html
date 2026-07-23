@@ -60,6 +60,22 @@
 
 </div>
 
+<div class="emoji-grid">
+    {% for item in emoji_counts %}
+    <a href="{{ url_for('emoji_gallery', emoji_id=item.id) }}" class="emoji-card">
+        <div class="emoji">{{ item.emoji }}</div>
+        <div class="post-count">
+            {{ item.post_count }}
+            {% if item.post_count == 1 %}
+                Post
+            {% else %}
+                Posts
+            {% endif %}
+        </div>
+    </a>
+    {% endfor %}
+</div>
+
 </div>
 
    <script src="{{ url_for('static', filename='js/profile.js') }}"></script>

@@ -36,7 +36,7 @@
         name="image"
         hidden
         accept="image/*,video/*"
-        onchange="document.getElementById('uploadForm').submit();"
+        
     >
 
     <button
@@ -79,7 +79,39 @@
 
 </div>
 
-</div>
+</div><script>
+const input = document.getElementById("imageInput");
+const form = document.getElementById("uploadForm");
+
+input.addEventListener("change", function () {
+    const file = this.files[0];
+    if (!file) return;
+
+    if (file.type.startsWith("image/")) {
+        form.submit();
+        return;
+    }
+
+    if (file.type.startsWith("video/")) {
+        const video = document.createElement("video");
+        video.preload = "metadata";
+
+        video.onloadedmetadata = function () {
+            URL.revokeObjectURL(video.src);
+
+            if (video.duration > 60) {
+                alert("Video must be 1 minute or less.");
+                input.value = "";
+                return;
+            }
+
+            form.submit();
+        };
+
+        video.src = URL.createObjectURL(file);
+    }
+});
+</script>
 
 </body>
 </html>
