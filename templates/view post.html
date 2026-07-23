@@ -16,7 +16,7 @@
 
 {% for post in posts %}
 
-<div class="post-item">
+<div class="post-item" id="post-{{post.id}}">
 
 {% if post.media_type == "image" %}
 
@@ -24,7 +24,7 @@
 
 {% elif post.media_type == "video" %}
 
-    <video class="full-image" autoplay muted loop>
+    <video class="full-image" autoplay muted loop playsinline>
         <source src="{{ post.image_url }}" type="video/mp4">
     </video>
 
@@ -34,7 +34,15 @@
 
 {% endfor %}
 
-</div>
+</div><script>
+window.onload = function() {
+
+    document.getElementById(
+        "post-{{ current_post.id }}"
+    ).scrollIntoView();
+
+}
+</script>
 
 </body>
 </html>
