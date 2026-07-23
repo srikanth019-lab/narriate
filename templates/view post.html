@@ -12,17 +12,29 @@
 
 <a class="close-btn" href="javascript:history.back()">✕</a>
 
+<div class="post-feed">
+
+{% for post in posts %}
+
+<div class="post-item">
+
 {% if post.media_type == "image" %}
 
     <img src="{{ post.image_url }}" class="full-image">
 
 {% elif post.media_type == "video" %}
 
-    <video class="full-image" controls autoplay>
+    <video class="full-image" autoplay muted loop>
         <source src="{{ post.image_url }}" type="video/mp4">
     </video>
 
 {% endif %}
+
+</div>
+
+{% endfor %}
+
+</div>
 
 </body>
 </html>

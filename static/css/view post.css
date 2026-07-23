@@ -1,23 +1,34 @@
-body{
+body {
     margin:0;
-    background:#000;
+    background:black;
+}
+
+.post-feed {
+    height:100vh;
+    overflow-y:scroll;
+    scroll-snap-type:y mandatory;
+}
+
+.post-item {
+    height:100vh;
+    scroll-snap-align:start;
     display:flex;
     justify-content:center;
     align-items:center;
-    height:100vh;
 }
 
-.full-image{
-    max-width: 100vw;
-    max-height:100vh;
+.full-image {
+    width:100%;
+    height:100%;
     object-fit:contain;
 }
 
-.close-btn{
+.close-btn {
     position:fixed;
     top:20px;
-    left:20px;
+    right:20px;
+    z-index:10;
     color:white;
+    font-size:30px;
     text-decoration:none;
-    font-size:32px;
 }
