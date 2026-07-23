@@ -1,22 +1,21 @@
 body {
     margin:0;
     background:black;
+    overflow: hidden;
 }
 
 .post-feed {
-    height:100vh;
-    overflow-y:scroll;
-    scroll-snap-type:y mandatory;
+    height: 100vh;
+    overflow-y: scroll;
+    scroll-snap-type: y mandatory;
+    scroll-behavior: smooth;
 }
 
 .post-item {
-    height:100vh;
-    scroll-snap-align:start;
-    display:flex;
-    justify-content:center;
-    align-items:center;
+    height: 100vh;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
 }
-
 .full-image {
     width:100%;
     height:100%;
