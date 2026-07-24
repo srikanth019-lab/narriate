@@ -25,8 +25,8 @@ document.addEventListener("DOMContentLoaded", () => {
             button.textContent = item.emoji;
             button.title = item.name;
             button.onclick = () => {
-                window.location.href = `/emoji/${item.id}`;
-            };
+                window.location.href = `/profile/${encodeURIComponent(profileUsername)}/emoji/${item.id}`;
+};
             results.appendChild(button);
         });
 

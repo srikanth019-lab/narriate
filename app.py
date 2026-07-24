@@ -21,6 +21,8 @@ from dotenv import load_dotenv
 import os
 
 # Security (password hashing)
+from requests import post
+from requests import post
 from werkzeug.datastructures.file_storage import FileStorage
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -381,15 +383,30 @@ def api_search():
 
 @app.route("/profile/<username>")
 def view_profile(username):
+    profile_user = User.query.filter_by(username=username).first_or_404()
 
-    user = User.query.filter_by(username=username).first()
+    emoji_counts = (
+        db.session.query(
+            Emoji.id,
+            Emoji.emoji,
+            db.func.count(EmojiPost.id).label("post_count")
+        )
+        .join(EmojiPost, Emoji.id == EmojiPost.emoji_id)
+        .filter(EmojiPost.user_id == profile_user.id)
+        .group_by(Emoji.id, Emoji.emoji)
+        .all()
+    )
 
-    if not user:
-        return "User not found", 404
+    print(profile_user.username)
+    print(profile_user.id)
+    print(emoji_counts)
 
-    current_user_id = session.get("user_id")
-    return render_template("profile.html", user=user, current_user_id=current_user_id)
-
+    return render_template(
+        "profile.html",
+        user=profile_user,
+        current_user_id=session.get("user_id"),
+        emoji_counts=emoji_counts
+    )
 
 @app.route("/logout")
 def logout():
@@ -400,7 +417,17 @@ def logout():
 
 @app.route("/emojis-search")
 def emojis_search_page():
-    return render_template("emojis search.html")
+    user_id = session.get("user_id")
+
+    if not user_id:
+        return redirect(url_for("login"))
+
+    user = User.query.get_or_404(user_id)
+
+    return render_template(
+        "emojis search.html",
+        user=user
+    )
 
 
 
@@ -428,9 +455,12 @@ def api_emojis_search():
     return jsonify(results)
 
 
-@app.route("/emoji/<int:emoji_id>", methods=["GET", "POST"])
-def emoji_gallery(emoji_id):
+@app.route("/profile/<username>/emoji/<int:emoji_id>", methods=["GET", "POST"])
+def emoji_gallery(username, emoji_id):
+    profile_user = User.query.filter_by(username=username).first_or_404()
     emoji = Emoji.query.get_or_404(emoji_id)
+    logged_in_user_id = session.get("user_id")
+    user = profile_user
 
     if request.method == "POST":
         file = request.files.get("image")
@@ -471,24 +501,28 @@ def emoji_gallery(emoji_id):
         db.session.add(new_post)
         db.session.commit()
 
-        return redirect(url_for("emoji_gallery", emoji_id=emoji.id))
+        return redirect(url_for("emoji_gallery", username=profile_user.username, emoji_id=emoji.id))
 
  # This runs for GET requests
     posts = EmojiPost.query.filter_by(emoji_id=emoji.id).all()
+    owner_id = posts[0].user_id if posts else None
 
     return render_template(
         "emoji gallery.html",
         emoji=emoji,
-        posts=posts
-    )
+        posts=posts,
+        profile_user=profile_user,
+        logged_in_user_id=logged_in_user_id
+)
     
-
+        
 @app.route("/post/<int:post_id>")
 def view_post(post_id):
     post = EmojiPost.query.get_or_404(post_id)
     posts = EmojiPost.query.filter_by(emoji_id=post.emoji_id).all()
 
-    return render_template("view post.html", posts=posts, current_post=post)
+    return render_template("view post.html", posts=posts, current_post=post,  logged_in_user_id=session.get("user_id")
+    )
 
 
 
@@ -514,8 +548,15 @@ def delete_post(post_id):
     db.session.delete(post)
     db.session.commit()
 
-    return redirect(url_for("emoji_gallery", emoji_id=emoji_id))
+    owner = User.query.get(post.user_id)
 
+    return redirect(
+        url_for(
+            "emoji_gallery",
+            username=owner.username,
+            emoji_id=emoji_id
+        )
+    )
 
 if __name__ == "__main__":
     app.run(debug=True)

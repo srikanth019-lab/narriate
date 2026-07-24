@@ -24,7 +24,7 @@
         </div>
 
        <form
-    action="{{ url_for('emoji_gallery', emoji_id=emoji.id) }}"
+    action="{{ url_for('emoji_gallery', username=profile_user.username, emoji_id=emoji.id) }}"
     method="POST"
     enctype="multipart/form-data"
     id="uploadForm"
@@ -38,7 +38,7 @@
         accept="image/*,video/*"
         
     >
-
+    {% if logged_in_user_id ==profile_user.id%}
     <button
         type="button"
         class="add-btn"
@@ -46,7 +46,7 @@
     >
         ＋
     </button>
-
+    {% endif %}
 </form>
 
     </header>

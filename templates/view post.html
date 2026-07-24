@@ -13,7 +13,7 @@
 <div class="top-actions">
 
     <a class="close-btn" href="javascript:history.back()">✕</a>
-
+{% if logged_in_user_id == current_post.user_id %}
     <div class="post-menu">
 
         <button class="dots-btn">⋮</button>
@@ -27,7 +27,7 @@
         </div>
 
     </div>
-
+{% endif %}
 </div>
 
 <div class="post-feed">
