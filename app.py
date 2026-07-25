@@ -225,7 +225,7 @@ def login():
     identifier = request.form.get("identifier")
     password = request.form.get("password")
 
-    print("Identifier:", identifier)
+    print("Identifier:",repr(identifier))
 
     user = User.query.filter(
         (User.username == identifier) |
