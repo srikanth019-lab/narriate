@@ -5,7 +5,7 @@ from flask import abort
 from ast import If
 from typing import Any
 from datetime import datetime, timedelta
-
+from flask import request
 import cloudinary
 import cloudinary.uploader
 
@@ -341,6 +341,9 @@ def profile():
             following_id=user.id
         ).first() is not None
 
+    # Capture optional signup_success flag from query params
+    signup_success = request.args.get("signup_success") == "1"
+
     return render_template(
         "profile.html",
         user=user,
@@ -348,7 +351,8 @@ def profile():
         emoji_counts=emoji_counts,
         followers_count=followers_count,
         following_count=following_count,
-        is_following=is_following
+        is_following=is_following,
+        signup_success=signup_success
     )
 
 
