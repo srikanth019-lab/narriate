@@ -42,11 +42,39 @@
                     {{ user.bio if user.bio else "No bio yet." }}
                 </p>
 
-               {% if current_user_id == user.id %}
-    <button class="edit-btn"  onclick="location.href='/edit-profile'">
-        Edit Profile
-    </button>
-    {% endif %}
+            <div class="follow-stats">
+    <div>
+        <span id="followers-count">{{ followers_count }}</span>
+        <small>Followers</small>
+    </div>
+
+    <div>
+        <span id="following-count">{{ following_count }}</span>
+        <small>Following</small>
+    </div>
+</div>
+
+        {% if current_user_id == user.id %}
+
+        <button class="edit-btn"  onclick="location.href='/edit-profile'">
+            Edit Profile
+        </button>
+
+        {% else %}
+       
+        <button
+            id="follow-btn"
+            class="follow-btn"
+            data-user-id="{{ user.id }}">
+            {% if is_following %}
+                Following
+            {% else %}
+                Follow
+            {% endif %}
+        </button>
+
+        {% endif %}
+
 
 {% if current_user_id == user.id %}
 <div class="search-bar" onclick="window.location.href='/emojis-search'">
@@ -79,6 +107,5 @@
 </div>
 
    <script src="{{ url_for('static', filename='js/profile.js') }}"></script>
-
 </body>
-</html>
+</html> 

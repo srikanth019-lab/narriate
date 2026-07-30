@@ -1,5 +1,5 @@
 // profile.js
-
+console.log("PROFILE JS LOADED - version ABCDE");
 // Search button
 const searchBtn = document.querySelector(".search-btn");
 
@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const searchInput = document.getElementById("emojiSearch");
     const results = document.getElementById("emojiResults");
 
-    if (!searchInput) return;
+    if (searchInput) {
 
     searchInput.addEventListener("input", async () => {
 
@@ -55,6 +55,59 @@ document.addEventListener("DOMContentLoaded", () => {
 
     });
 
+    }
+
 });
 
-emojiDiv.className = "emoji-item";
+
+
+const followBtn = document.getElementById("follow-btn");
+
+     console.log("Button:", followBtn);
+
+     if (followBtn) {
+
+    followBtn.addEventListener("click", async () => {
+
+    console.log("Current button:", followBtn.textContent);
+
+    const userId = followBtn.dataset.userId;
+    const isFollowing = followBtn.textContent.trim() === "Following";
+
+    const url = isFollowing
+        ? `/unfollow/${userId}`
+        : `/follow/${userId}`;
+
+    console.log("Sending:", url);
+
+    const response = await fetch(url, {
+        method: "POST"
+    });
+
+    const data = await response.json();
+
+    console.log("Status:", response.status);
+    console.log("Response:", data);
+
+    if (!response.ok) {
+        alert(data.error);
+        return;
+    }
+
+    const followersCount = document.getElementById("followers-count");
+
+    let count = parseInt(followersCount.textContent, 10);
+
+    if (isFollowing) {
+        followBtn.textContent = "Follow";
+        followersCount.textContent = count - 1;
+    } else {
+        followBtn.textContent = "Following";
+        followersCount.textContent = count + 1;
+    }
+
+    console.log("New button:", followBtn.textContent);
+ });
+
+}
+

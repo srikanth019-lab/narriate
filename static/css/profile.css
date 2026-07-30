@@ -157,3 +157,36 @@ body{
     font-weight: 600;
     color: #666;
 }
+
+
+
+.follow-btn {
+    background-color: #0095f6;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 22px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.follow-btn:hover {
+    background-color: #1877f2;
+    transform: scale(1.03);
+}
+
+.follow-btn:active {
+    transform: scale(0.98);
+}
+
+
+.following {
+    background-color: #e4e6eb;
+    color: #000;
+}
+
+.following:hover {
+    background-color: #d8dadf;
+}

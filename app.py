@@ -11,7 +11,6 @@ import cloudinary.uploader
 
 # Flask core
 from flask import Flask, flash, request, jsonify, session, render_template, redirect, url_for
-
 # Database
 from flask_sqlalchemy import SQLAlchemy
 
@@ -30,12 +29,18 @@ from flask_migrate import Migrate
 
 from flask import request, redirect, url_for
 
+from datetime import datetime
+
+
 
 
 # =======================
 # 2️⃣ CONFIG
 # =======================
 app = Flask(__name__)
+
+print("APP FILE:", os.path.abspath(__file__))
+print("STATIC FOLDER:", app.static_folder)
 load_dotenv()
 
 print("DATABASE_URL =", os.getenv("DATABASE_URL"))
@@ -125,6 +130,46 @@ class EmojiPost(db.Model):
         "Emoji",
         backref=db.backref("posts", lazy=True)
     )
+
+
+
+  
+class Follow(db.Model):
+    __tablename__ = "follow"
+
+    id = db.Column(db.Integer, primary_key=True)
+
+    # User who clicks "Follow"
+    follower_id = db.Column(
+        db.Integer,
+        db.ForeignKey("user.id", ondelete="CASCADE"),
+        nullable=False
+    )
+
+    # User being followed
+    following_id = db.Column(
+        db.Integer,
+        db.ForeignKey("user.id", ondelete="CASCADE"),
+        nullable=False
+    )
+
+    created_at = db.Column(
+        db.DateTime,
+        default=datetime.utcnow,
+        nullable=False
+    )
+
+    # Prevent duplicate follows
+    __table_args__ = (
+        db.UniqueConstraint(
+            "follower_id",
+            "following_id",
+            name="unique_follow"
+        ),
+    )
+
+
+
 
 
 with app.app_context():
@@ -253,13 +298,19 @@ def profile():
     # CHECK
     user_id = session.get("user_id")
 
-    # DECISION
+    print("Session user_id:", user_id)
+    print("current_user_id:", user_id)
+  
+     # DECISION
+
     if not user_id:
         flash("Please log in first.")
         return redirect(url_for("login"))
 
     # ACTION
     user = User.query.get(user_id)
+
+    print("user.id:", user.id)  
 
     if not user:
         flash("User not found.")
@@ -276,12 +327,29 @@ def profile():
         .group_by(Emoji.id, Emoji.emoji)
         .all()
     )
+    followers_count = Follow.query.filter_by(
+        following_id=user_id
+    ).count()
+
+    following_count = Follow.query.filter_by(
+        follower_id=user_id
+    ).count()
+
+    is_following = False
+    if user.id != user_id:
+        is_following = Follow.query.filter_by(
+            follower_id=user_id,
+            following_id=user.id
+        ).first() is not None
 
     return render_template(
         "profile.html",
         user=user,
         current_user_id=user_id,
-        emoji_counts=emoji_counts
+        emoji_counts=emoji_counts,
+        followers_count=followers_count,
+        following_count=following_count,
+        is_following=is_following
     )
 
 
@@ -401,10 +469,30 @@ def view_profile(username):
     print(profile_user.id)
     print(emoji_counts)
 
+    current_user_id = session.get("user_id")
+
+    print("Session user_id:", current_user_id)
+    print("Profile user_id:", profile_user.id)
+
+    is_following = False
+    if current_user_id and current_user_id != profile_user.id:
+        is_following = Follow.query.filter_by(
+            follower_id=current_user_id,
+            following_id=profile_user.id
+        ).first() is not None
+    
+    print("is_following:", is_following)
+
+    followers_count = Follow.query.filter_by(following_id=profile_user.id).count()
+    following_count = Follow.query.filter_by(follower_id=profile_user.id).count()
+
     return render_template(
         "profile.html",
         user=profile_user,
         current_user_id=session.get("user_id"),
+        is_following=is_following,
+        followers_count=followers_count,
+        following_count=following_count,
         emoji_counts=emoji_counts
     )
 
@@ -558,5 +646,106 @@ def delete_post(post_id):
         )
     )
 
+
+
+@app.route("/follow/<int:user_id>", methods=["POST"])
+def follow(user_id):
+    logged_in_user_id = session.get("user_id")
+
+    if not logged_in_user_id:
+        return jsonify({"error": "Please log in"}), 401
+
+    if logged_in_user_id == user_id:
+        return jsonify({"error": "You can't follow yourself"}), 400
+
+    user = User.query.get(user_id)
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+
+    already = Follow.query.filter_by(
+        follower_id=logged_in_user_id,
+        following_id=user_id
+    ).first()
+
+    if already:
+        return jsonify({"message": "Already following"}), 200
+
+    follow = Follow(
+        follower_id=logged_in_user_id,
+        following_id=user_id
+    )
+
+    db.session.add(follow)
+    db.session.commit()
+
+    return jsonify({"message": "Followed successfully"}), 201
+
+
+@app.route("/unfollow/<int:user_id>", methods=["POST"])
+def unfollow_user(user_id):
+    print("=== UNFOLLOW ROUTE HIT ===")
+    print("user_id:", user_id)
+    print("session user_id:", session.get("user_id"))
+
+    logged_in_user_id = session.get("user_id")
+
+    if not logged_in_user_id:
+        return jsonify({"error": "Please log in"}), 401
+
+    follow = Follow.query.filter_by(
+        follower_id=logged_in_user_id,
+        following_id=user_id
+    ).first()
+
+    print("Follow row:", follow)
+
+    if not follow:
+        return jsonify({"error": "Not following this user"}), 404
+
+    db.session.delete(follow)
+    db.session.commit()
+
+    return jsonify({"message": "Unfollowed successfully"})
+
+
+
+
+@app.route("/follow/counts/<int:user_id>")
+def follow_counts(user_id):
+
+    user = User.query.get(user_id)
+
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+
+    followers = Follow.query.filter_by(
+        following_id=user_id
+    ).count()
+
+    following = Follow.query.filter_by(
+        follower_id=user_id
+    ).count()
+
+    return jsonify({
+        "followers": followers,
+        "following": following
+    })
+
+
+@app.route("/follow/status/<int:user_id>")
+def follow_status(user_id):
+
+    follow = Follow.query.filter_by(
+        follower_id=session.get("user_id"),
+        following_id=user_id
+    ).first()
+
+    return jsonify({
+        "is_following": follow is not None
+    })
+
+
+print(app.url_map)
+
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True) 
