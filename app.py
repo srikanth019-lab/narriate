@@ -20,7 +20,7 @@ from dotenv import load_dotenv
 import os
 
 # Security (password hashing)
-from requests import post
+
 from requests import post
 from werkzeug.datastructures.file_storage import FileStorage
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -38,7 +38,7 @@ from datetime import datetime
 # 2️⃣ CONFIG
 # =======================
 app = Flask(__name__)
-
+app.config["SEND_FILE_MAX_AGE_DEFAULT"] = 0
 print("APP FILE:", os.path.abspath(__file__))
 print("STATIC FOLDER:", app.static_folder)
 load_dotenv()
@@ -298,8 +298,7 @@ def profile():
     # CHECK
     user_id = session.get("user_id")
 
-    print("Session user_id:", user_id)
-    print("current_user_id:", user_id)
+   
   
      # DECISION
 
@@ -310,7 +309,7 @@ def profile():
     # ACTION
     user = User.query.get(user_id)
 
-    print("user.id:", user.id)  
+    
 
     if not user:
         flash("User not found.")
@@ -465,14 +464,10 @@ def view_profile(username):
         .all()
     )
 
-    print(profile_user.username)
-    print(profile_user.id)
-    print(emoji_counts)
-
+   
     current_user_id = session.get("user_id")
 
-    print("Session user_id:", current_user_id)
-    print("Profile user_id:", profile_user.id)
+    
 
     is_following = False
     if current_user_id and current_user_id != profile_user.id:
@@ -481,8 +476,7 @@ def view_profile(username):
             following_id=profile_user.id
         ).first() is not None
     
-    print("is_following:", is_following)
-
+   
     followers_count = Follow.query.filter_by(following_id=profile_user.id).count()
     following_count = Follow.query.filter_by(follower_id=profile_user.id).count()
 
@@ -556,9 +550,7 @@ def emoji_gallery(username, emoji_id):
         if not file:
             return redirect(url_for("emoji_gallery", emoji_id=emoji.id))
 
-        print("Filename:", file.filename)
-        print("Mimetype:", file.mimetype)
-
+       
         # Detect media type
         if file.mimetype.startswith("image/"):
             media_type = "image"
@@ -582,9 +574,7 @@ def emoji_gallery(username, emoji_id):
         )
 
 
-        print("Session user_id:", session.get("user_id"))
-        print("New post user_id:", new_post.user_id)
-
+       
 
         db.session.add(new_post)
         db.session.commit()
@@ -621,8 +611,7 @@ def delete_post(post_id):
     user_id = session.get("user_id")
     post = EmojiPost.query.get_or_404(post_id)
 
-    print("Session user_id:", user_id)
-    print("Post user_id:", post.user_id)
+    
 
     if not user_id:
         flash("Please log in first.")
@@ -683,9 +672,7 @@ def follow(user_id):
 
 @app.route("/unfollow/<int:user_id>", methods=["POST"])
 def unfollow_user(user_id):
-    print("=== UNFOLLOW ROUTE HIT ===")
-    print("user_id:", user_id)
-    print("session user_id:", session.get("user_id"))
+  
 
     logged_in_user_id = session.get("user_id")
 
@@ -697,8 +684,7 @@ def unfollow_user(user_id):
         following_id=user_id
     ).first()
 
-    print("Follow row:", follow)
-
+    
     if not follow:
         return jsonify({"error": "Not following this user"}), 404
 
@@ -745,7 +731,8 @@ def follow_status(user_id):
     })
 
 
-print(app.url_map)
+
+
 
 if __name__ == "__main__":
     app.run(debug=True) 
