@@ -258,7 +258,7 @@ def signup():
 
     # OUTPUT
     flash("Signup successful")
-    return redirect("/profile")
+    return redirect(url_for("profile", signup_success=1))
 
 
 @app.route("/login", methods=["GET", "POST"])

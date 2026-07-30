@@ -117,5 +117,12 @@
 </div>
 
    <script src="{{ url_for('static', filename='js/profile.js') }}"></script>
+{% if signup_success %}
+<script>
+gtag('event', 'sign_up', {
+  method: 'email'
+});
+</script>
+{% endif %}
 </body>
 </html> 
