@@ -38,13 +38,14 @@ from datetime import datetime
 # 2️⃣ CONFIG
 # =======================
 app = Flask(__name__)
-app.config["SEND_FILE_MAX_AGE_DEFAULT"] = 0
+
 print("APP FILE:", os.path.abspath(__file__))
 print("STATIC FOLDER:", app.static_folder)
 load_dotenv()
 
 print("DATABASE_URL =", os.getenv("DATABASE_URL"))
-app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(days=30)
+
+app.config["REMEMBER_COOKIE_DURATION"] = timedelta(days=365)
 
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
 app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL")
@@ -197,7 +198,7 @@ def signup():
         return render_template("signup.html")
 
     # INPUT
-    username = request.form.get("username")
+    username = request.form.get("username").strip()
     contact = request.form.get("contact")
     password = request.form.get("password")
 
@@ -377,7 +378,7 @@ def edit_profile():
     if request.method == "POST":
 
         # INPUT
-        username = request.form.get("username")
+        username = request.form.get("username").strip()
         bio = request.form.get("bio")
         profile_photo: FileStorage | None = request.files.get("profile_photo")
 
