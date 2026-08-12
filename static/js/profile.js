@@ -111,3 +111,72 @@ const followBtn = document.getElementById("follow-btn");
 
 }
 
+
+
+document.querySelectorAll(".profile-tab").forEach(tab => {
+
+    tab.addEventListener("click", () => {
+
+        document.querySelectorAll(".profile-tab").forEach(t => {
+            t.classList.remove("active");
+        });
+
+        document.querySelectorAll(".tab-content").forEach(content => {
+            content.classList.remove("active");
+        });
+
+        tab.classList.add("active");
+
+        const tabName = tab.dataset.tab;
+
+        document
+            .getElementById(`${tabName}-tab`)
+            .classList.add("active");
+    });
+
+});
+
+
+
+async function deleteVideo(postId) {
+
+    if (!confirm("Are you sure you want to delete this video?")) {
+        return;
+    }
+
+    const response = await fetch(`/delete-video/${postId}`, {
+        method: "POST"
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+        alert(data.error || "Failed to delete video");
+        return;
+    }
+
+    location.reload();
+}
+
+
+
+function toggleVideoMenu(event, postId) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    const menu = document.getElementById("video-menu-" + postId);
+
+    if (!menu) {
+        return;
+    }
+
+    // Close other video menus
+    document.querySelectorAll(".video-menu").forEach(function(otherMenu) {
+        if (otherMenu !== menu) {
+            otherMenu.classList.remove("show");
+        }
+    });
+
+    // Toggle this video's menu
+    menu.classList.toggle("show");
+}

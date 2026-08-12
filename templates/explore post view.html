@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-KQWKWFQQ');</script>
+<!-- End Google Tag Manager -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happstat - Explore Post</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/explore post view.css') }}">
+</head>
+
+<body>
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KQWKWFQQ"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+
+
+<div class="top-actions">
+
+    <a class="close-btn" href="javascript:history.back()">✕</a>
+
+  
+
+       
+   
+<div class="post-feed">
+
+
+ {% for post in posts %}
+
+<div class="reel"  id="post-{{ post.id }}">
+
+    
+<video class="full-video" playsinline loop muted preload="metadata">
+        <source src="{{ post.video_url }}" type="video/mp4">
+    </video>
+
+ 
+
+      <!-- Three dots - only for the creator -->
+    
+    {% if current_user_id == post.user_id and source == 'videos' %}
+
+        <button
+            class="video-menu-btn"
+            type="button"
+            data-post-id="{{ post.id }}"
+            onclick="toggleVideoMenu(event, this.dataset.postId)">
+            ⋮
+        </button>
+
+        <!-- Hidden menu -->
+        <div
+            class="video-menu"
+            id="video-menu-{{ post.id }}">
+
+            <button
+                class="delete-video-btn"
+                type="button"
+                onclick="deleteVideo('{{ post.id }}')">
+                Delete
+            </button>
+
+        </div>
+
+    {% endif %}
+
+
+    <!-- Share -->
+
+       <div class="video-actions">
+
+        <button class="share-button" data-post-id="{{ post.id }}">
+            ↗️
+        </button>
+
+    </div>
+
+
+<!-- Creator information -->
+    <div class="creator-info">
+        
+
+        <a
+                href="{{ url_for('view_profile', username=post.user.username) }}"
+                class="creator-link"
+            >
+
+        <img
+            src="{{post.user.profile_photo }}"
+            class="creator-profile-picture"
+        >
+
+        <div class="creator-details">
+
+            <div class="creator-name-row">
+
+                <span class="creator-username">
+                    {{ post.user.username }}
+                </span>
+               </div>
+
+                        <div class="creator-bio">
+                            {{ post.user.bio }}
+                        </div>
+
+                    </div>
+
+                </a>
+               {% if current_user_id != post.user_id %}
+             
+                <button class="follow-button" data-user-id="{{ post.user_id }}">
+                    Follow
+                </button>
+
+               {% endif %}
+
+             
+            </div>
+
+        </div>
+    {%endfor%}
+   
+
+</div>
+
+<script>
+document.querySelectorAll('.share-button').forEach(function(button) {
+    button.addEventListener('click', function() {
+        sharePost(this.dataset.postId);
+    });
+});
+
+window.addEventListener("load", function() {
+    const currentPost = document.getElementById("post-{{ current_post.id }}");
+    if (currentPost) {
+
+        currentPost.scrollIntoView({
+            behavior: "instant",
+            block: "start"
+        });
+    }
+});
+</script>
+
+<script src="{{ url_for('static', filename='js/explore post view.js') }}"></script>
+
+</body>
+</html> 

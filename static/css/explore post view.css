@@ -1,0 +1,520 @@
+/* ==============================
+   PAGE
+============================== */
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+
+    width: 100%;
+    height: 100%;
+
+    overflow: hidden;
+
+    background: #000;
+
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+
+/* ==============================
+   CLOSE BUTTON
+============================== */
+
+.close-btn {
+    position: fixed;
+
+    top: 20px;
+    left: 20px;
+
+    z-index: 100;
+
+    width: 42px;
+    height: 42px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: white;
+    background: rgba(0, 0, 0, 0.45);
+
+    border-radius: 50%;
+
+    text-decoration: none;
+
+    font-size: 22px;
+    font-weight: 400;
+
+    backdrop-filter: blur(8px);
+
+    transition: background 0.2s ease,
+                transform 0.2s ease;
+}
+
+.close-btn:hover {
+    background: rgba(0, 0, 0, 0.7);
+
+    transform: scale(1.05);
+}
+
+
+/* ==============================
+   REEL FEED
+============================== */
+
+.post-feed {
+    width: 100%;
+    height: 100vh;
+
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    scroll-snap-type: y mandatory;
+
+    -webkit-overflow-scrolling: touch;
+
+    scrollbar-width: none;
+}
+
+.post-feed::-webkit-scrollbar {
+    display: none;
+}
+
+
+/* ==============================
+   INDIVIDUAL REEL
+============================== */
+
+.reel {
+    position: relative;
+
+    width: 100%;
+    height: 100vh;
+
+    min-height: 100vh;
+
+    overflow: hidden;
+
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+
+    background: #000;
+}
+
+
+/* ==============================
+   VIDEO
+============================== */
+
+.full-video {
+    position: absolute;
+
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    display: block;
+
+    object-fit: cover;
+
+    background: #000;
+}
+
+
+/* ==============================
+   BOTTOM GRADIENT
+   Makes creator information
+   easier to read
+============================== */
+
+.reel::after {
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    height: 230px;
+
+    z-index: 5;
+
+    pointer-events: none;
+
+    background: linear-gradient(
+        to top,
+        rgba(0, 0, 0, 0.75),
+        rgba(0, 0, 0, 0.35),
+        transparent
+    );
+}
+
+
+/* ==============================
+   CREATOR INFORMATION
+============================== */
+
+.creator-info {
+    position: absolute;
+
+    left: 20px;
+    right: 20px;
+    bottom: 28px;
+
+    z-index: 10;
+
+    display: flex;
+
+    align-items: flex-end;
+
+    gap: 12px;
+}
+
+
+/* ==============================
+   CREATOR PROFILE LINK
+============================== */
+
+.creator-link {
+    min-width: 0;
+
+    flex: 1;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 11px;
+
+    color: white;
+
+    text-decoration: none;
+}
+
+
+/* ==============================
+   PROFILE PICTURE
+============================== */
+
+.creator-profile-picture {
+    width: 48px;
+    height: 48px;
+
+    flex-shrink: 0;
+
+    object-fit: cover;
+
+    border-radius: 50%;
+
+    border: 2px solid white;
+
+    background: #222;
+}
+
+
+/* ==============================
+   CREATOR DETAILS
+============================== */
+
+.creator-details {
+    min-width: 0;
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: center;
+}
+
+
+/* ==============================
+   USERNAME
+============================== */
+
+.creator-name-row {
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+}
+
+.creator-username {
+    color: white;
+
+    font-size: 16px;
+
+    font-weight: 700;
+
+    line-height: 20px;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+
+    max-width: 220px;
+}
+
+
+/* ==============================
+   BIO
+============================== */
+
+.creator-bio {
+    margin-top: 3px;
+
+    color: rgba(255, 255, 255, 0.9);
+
+    font-size: 13px;
+
+    line-height: 18px;
+
+    max-width: 280px;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+}
+
+
+/* ==============================
+   FOLLOW BUTTON
+============================== */
+
+.follow-button {
+    flex-shrink: 0;
+
+    min-width: 78px;
+
+    height: 34px;
+
+    padding: 0 15px;
+
+    border: none;
+
+    border-radius: 8px;
+
+    background: white;
+
+    color: #111;
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition: transform 0.15s ease,
+                opacity 0.15s ease;
+}
+
+.follow-button:hover {
+    transform: scale(1.04);
+
+    opacity: 0.9;
+}
+
+.follow-button:active {
+    transform: scale(0.96);
+}
+
+
+/* ==============================
+   TABLET / DESKTOP
+============================== */
+
+@media (min-width: 768px) {
+
+    .reel {
+        display: flex;
+
+        justify-content: center;
+
+        background: #000;
+    }
+
+    .full-video {
+        width: min(100%, 500px);
+
+        left: 50%;
+
+        transform: translateX(-50%);
+    }
+
+    .creator-info {
+        left: 50%;
+
+        width: min(460px, calc(100% - 40px));
+
+        right: auto;
+
+        transform: translateX(-50%);
+    }
+
+}
+
+
+/* ==============================
+   MOBILE
+============================== */
+
+@media (max-width: 600px) {
+
+    .close-btn {
+        top: 15px;
+        left: 15px;
+
+        width: 38px;
+        height: 38px;
+
+        font-size: 20px;
+    }
+
+    .creator-info {
+        left: 15px;
+        right: 15px;
+
+        bottom: 22px;
+
+        gap: 9px;
+    }
+
+    .creator-profile-picture {
+        width: 44px;
+        height: 44px;
+    }
+
+    .creator-username {
+        font-size: 15px;
+
+        max-width: 160px;
+    }
+
+    .creator-bio {
+        font-size: 12px;
+
+        max-width: 190px;
+    }
+
+    .follow-button {
+        min-width: 72px;
+
+        height: 32px;
+
+        padding: 0 12px;
+
+        font-size: 13px;
+    }
+
+}
+
+
+.reel {
+    width: 100%;
+}
+
+.video-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.full-video {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.video-actions {
+    position: absolute;
+    right: 20px;
+    bottom: 100px;
+    z-index: 20;
+}
+
+.share-button {
+    width: 50px;
+    height: 50px;
+    border: none;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.6);
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+
+
+.reel {
+    position: relative;
+}
+
+.video-menu-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+
+    width: 38px;
+    height: 38px;
+
+    border: none;
+    border-radius: 50%;
+
+    background: rgba(0, 0, 0, 0.55);
+    color: white;
+
+    font-size: 26px;
+    cursor: pointer;
+
+    z-index: 100;
+}
+
+.video-menu {
+    display: none;
+
+    position: absolute;
+    top: 60px;
+    right: 15px;
+
+    background: white;
+    border-radius: 8px;
+
+    overflow: hidden;
+
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.3);
+
+    z-index: 101;
+}
+
+.video-menu.show {
+    display: block;
+}
+
+.delete-video-btn {
+    border: none;
+    background: white;
+
+    color: red;
+
+    padding: 12px 20px;
+
+    cursor: pointer;
+}

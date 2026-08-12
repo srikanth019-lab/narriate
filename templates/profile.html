@@ -23,10 +23,19 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- End Google Tag Manager (noscript) -->
 
-
+<header class="top-header">
 <div class="logo">Happstat</div>
 
 <header class="top-bar">
+    <header class="top-bar">
+
+   {% if current_user_id %}
+<a href="{{ url_for('explore') }}" class="explore-link">
+    explore
+</a>
+{% endif %}
+
+</header>
     {% if current_user_id == user.id %}
         <button class="search-btn" onclick="location.href='/search'">
             ⌕
@@ -37,6 +46,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
         <!-- Profile Header -->
         <div class="profile-header">
+        
 
             <!-- Profile Picture -->
             <div class="profile-photo">
@@ -88,6 +98,20 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
         {% endif %}
 
+    <div class="profile-tabs">
+
+    <button class="profile-tab active" data-tab="posts">
+        <span class="tab-icon">▦</span>
+        <span class="tab-label">Posts</span>
+    </button>
+
+    <button class="profile-tab" data-tab="videos">
+        <span class="tab-icon">▶</span>
+        <span class="tab-label">Videos</span>
+    </button>
+
+</div>
+
 
 {% if current_user_id == user.id %}
 <div class="search-bar" onclick="window.location.href='/emojis-search'">
@@ -97,11 +121,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
  
 
-</div>
+
 
 </div>
 
-<div class="emoji-grid">
+<div class="emoji-grid tab-content active" id="posts-tab">
     {% for item in emoji_counts %}
     <a href="{{ url_for('emoji_gallery', username=user.username, emoji_id=item.id) }}" class="emoji-card">
         <div class="emoji">{{ item.emoji }}</div>
@@ -109,7 +133,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             {{ item.post_count }}
             {% if item.post_count == 1 %}
                 Post
-            {% else %}
+            {% else %}  
                 Posts
             {% endif %}
         </div>
@@ -117,6 +141,34 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     {% endfor %}
 </div>
 
+
+
+
+<div class="explore-grid videos-grid tab-content" id="videos-tab">
+
+    {% for post in explore_posts %}
+
+       <div class="video-item">
+
+           <a href="{{ url_for('explore_post_view', post_id=post.id, source='videos') }}"
+              class="videos-item">
+
+              <video
+                class="explore-video"
+                muted
+                playsinline
+                preload="metadata"
+        >
+                <source src="{{ post.video_url }}" type="video/mp4">
+
+               </video>
+
+            </a>
+
+        </div> 
+
+   {% endfor %}
+       
 </div>
 
    <script src="{{ url_for('static', filename='js/profile.js') }}"></script>
@@ -128,4 +180,4 @@ gtag('event', 'sign_up', {
 </script>
 {% endif %}
 </body>
-</html> 
+</html>     

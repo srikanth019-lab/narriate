@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-KQWKWFQQ');</script>
+<!-- End Google Tag Manager -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happstat - explore</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/explore.css') }}">
+</head>
+<body>
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KQWKWFQQ"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+
+
+<div class="container">
+
+   <header class="top-bar">
+
+    <a href="{{ url_for('profile') }}" class="back-btn">
+        ←
+    </a>
+
+    <div class="explore-title">
+        Explore
+    </div>
+
+    {% if logged_in_user_id %}
+    <form
+        action="{{ url_for('explore_upload') }}"
+        method="POST"
+        enctype="multipart/form-data"
+        id="uploadForm"
+    >
+
+        <input
+            type="file"
+            id="videoInput"
+            name="video"
+            hidden
+            accept="video/*"
+        >
+
+        <button
+            type="button"
+            class="add-btn"
+            onclick="document.getElementById('videoInput').click();"
+        >
+            ＋
+        </button>
+
+    </form>
+    {% endif %}
+
+   
+
+    <!-- Gallery -->
+
+    <div class="explore-grid">
+
+ 
+
+    {% for post in video_posts %}
+
+    <a href="{{ url_for('explore_post_view', post_id=post.id,source='explore') }}"
+       class="explore-item">
+
+        <video
+            class="explore-video"
+            muted
+            playsinline
+            preload="metadata"
+        >
+            <source src="{{ post.video_url }}" type="video/mp4">
+        </video>
+
+    </a>
+
+    {% endfor %}
+
+</div>
+   
+
+</div> 
+    <script>
+const input = document.getElementById("videoInput");
+const form = document.getElementById("uploadForm");
+
+if (input && form) {
+
+    input.addEventListener("change", function () {
+
+        const file = this.files[0];
+
+        if (!file) return;
+
+        if (!file.type.startsWith("video/")) {
+            alert("Please select a video.");
+            input.value = "";
+            return;
+        }
+
+        const video = document.createElement("video");
+
+        video.preload = "metadata";
+
+        video.onloadedmetadata = function () {
+
+            URL.revokeObjectURL(video.src);
+
+            if (video.duration > 60) {
+                alert("Video must be 1 minute or less.");
+                input.value = "";
+                return;
+            }
+
+            form.submit();
+        };
+
+        video.src = URL.createObjectURL(file);
+    });
+}
+</script>
+
+
+</body>
+</html>

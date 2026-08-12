@@ -12,7 +12,7 @@ import cloudinary.uploader
 # Flask core
 from flask import Flask, flash, request, jsonify, session, render_template, redirect, url_for
 # Database
-from flask_sqlalchemy import SQLAlchemy
+from flask_sqlalchemy import SQLAlchemy  # type: ignore[import]
 
 
 # Environment variables
@@ -171,6 +171,38 @@ class Follow(db.Model):
 
 
 
+class ExplorePost(db.Model):
+    __tablename__ = 'explore_post'
+
+    id = db.Column(db.Integer, primary_key=True)
+
+    user_id = db.Column(
+        db.Integer,
+        db.ForeignKey('user.id'),
+        nullable=False
+    )
+
+    video_url = db.Column(
+        db.String(500),
+        nullable=False
+    )
+
+    created_at = db.Column(
+        db.DateTime,
+        default=datetime.utcnow,
+        nullable=False
+    )
+
+    user = db.relationship(
+        'User',
+        backref=db.backref(
+            'explore_posts',
+            lazy=True
+        )
+    )
+
+
+
 
 
 with app.app_context():
@@ -299,9 +331,7 @@ def profile():
     # CHECK
     user_id = session.get("user_id")
 
-   
-  
-     # DECISION
+        # DECISION
 
     if not user_id:
         flash("Please log in first.")
@@ -315,6 +345,12 @@ def profile():
     if not user:
         flash("User not found.")
         return redirect(url_for("login"))
+
+    explore_posts = ExplorePost.query.filter_by(
+        user_id=user.id
+    ).order_by(
+        ExplorePost.created_at.desc()
+    ).all()
 
     emoji_counts = (
         db.session.query(
@@ -350,6 +386,7 @@ def profile():
         user=user,
         current_user_id=user_id,
         emoji_counts=emoji_counts,
+        explore_posts=explore_posts,
         followers_count=followers_count,
         following_count=following_count,
         is_following=is_following,
@@ -469,6 +506,15 @@ def view_profile(username):
         .all()
     )
 
+
+    # Explore videos
+    video_posts = (
+        ExplorePost.query
+        .filter_by(user_id=profile_user.id)
+        .order_by(ExplorePost.created_at.desc())
+        .all()
+    )
+
    
     current_user_id = session.get("user_id")
 
@@ -492,7 +538,8 @@ def view_profile(username):
         is_following=is_following,
         followers_count=followers_count,
         following_count=following_count,
-        emoji_counts=emoji_counts
+        emoji_counts=emoji_counts,
+        video_posts=video_posts
     )
 
 @app.route("/logout")
@@ -662,17 +709,22 @@ def follow(user_id):
     ).first()
 
     if already:
-        return jsonify({"message": "Already following"}), 200
-
-    follow = Follow(
+        return jsonify({
+            "message": "Already following",
+            "is_following": True
+        }), 200
+    new_follow = Follow(
         follower_id=logged_in_user_id,
         following_id=user_id
     )
 
-    db.session.add(follow)
+    db.session.add(new_follow)
     db.session.commit()
 
-    return jsonify({"message": "Followed successfully"}), 201
+    return jsonify({
+        "message": "Followed successfully",
+        "is_following": True
+    }), 201
 
 
 @app.route("/unfollow/<int:user_id>", methods=["POST"])
@@ -691,14 +743,18 @@ def unfollow_user(user_id):
 
     
     if not follow:
-        return jsonify({"error": "Not following this user"}), 404
+        return jsonify({
+            "error": "Not following this user",
+            "is_following": False
+        }), 404
 
     db.session.delete(follow)
     db.session.commit()
 
-    return jsonify({"message": "Unfollowed successfully"})
-
-
+    return jsonify({
+        "message": "Unfollowed successfully",
+        "is_following": False
+    }), 200
 
 
 @app.route("/follow/counts/<int:user_id>")
@@ -737,7 +793,128 @@ def follow_status(user_id):
 
 
 
+@app.route('/explore')
+def explore():
+    posts = EmojiPost.query.order_by(
+        EmojiPost.created_at.desc()
+    ).all()
+
+    video_posts = ExplorePost.query.order_by(
+        ExplorePost.created_at.desc()
+    ).all()
+
+    return render_template(
+        'explore.html',
+        posts=posts,
+        video_posts=video_posts,
+        logged_in_user_id=session.get('user_id')
+    )
+
+def new_func():
+    posts = EmojiPost.query.order_by(
+        EmojiPost.created_at.desc()
+    ).all()
+    return posts
+
+
+@app.route('/explore/upload', methods=['POST'])
+def explore_upload():
+
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+
+    file = request.files.get('video')
+
+    if not file:
+        return redirect(url_for('explore'))
+
+     # Upload video to Cloudinary
+    result = cloudinary.uploader.upload(
+        file,
+        resource_type="video"
+    )
+
+    # Get Cloudinary video URL
+    video_url = result['secure_url']
+
+    # Create Explore post
+    post = ExplorePost(
+        user_id=session['user_id'],
+        video_url=video_url
+    )
+
+    db.session.add(post)
+    db.session.commit()
+
+    return redirect(url_for('explore'))
+
+
+
+
+@app.route("/explore/post/<int:post_id>")
+def explore_post_view(post_id):
+
+    current_post = ExplorePost.query.get_or_404(post_id)
+
+    source = request.args.get("source", "explore")
+
+    if source == "videos":
+        # Profile Videos → only that creator's videos
+        posts = ExplorePost.query.filter_by(
+            user_id=current_post.user_id
+        ).order_by(
+            ExplorePost.created_at.desc()
+        ).all()
+    else:
+        # Explore page
+        posts = ExplorePost.query.order_by(
+            ExplorePost.created_at.desc()
+        ).all()
+   
+   
+
+    return render_template(
+        "explore post view.html",
+        posts=posts,
+        current_post=current_post,
+        current_user_id=session.get("user_id"),
+        source=source
+    )
+
+
+
+@app.route("/delete-explore-post/<int:post_id>", methods=["POST"])
+def delete_explore_post(post_id):
+
+   
+
+    if "user_id" not in session:
+        return jsonify({
+            "success": False,
+            "message": "Please login."
+        }), 401
+
+    post = ExplorePost.query.get_or_404(post_id)
+    
+    # ONLY THE CREATOR CAN DELETE
+    if post.user_id != session["user_id"]:
+        return jsonify({
+            "success": False,
+            "message": "You cannot delete this post."
+        }), 403
+
+    db.session.delete(post)
+    db.session.commit()
+
+    return jsonify({
+        "success": True
+    })
+
+
+
+
+
 
 
 if __name__ == "__main__":
-    app.run(debug=True) 
+    app.run(host="0.0.0.0", port=5000, debug=True)
