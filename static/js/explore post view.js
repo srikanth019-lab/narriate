@@ -207,4 +207,10 @@ function sharePost(postId) {
 
     }
 }
+
+// Make functions available to the HTML/page
+window.sharePost = sharePost;
+window.deleteVideo = deleteVideo;
+window.toggleVideoMenu = toggleVideoMenu;
+
 });
