@@ -1,4 +1,4 @@
-const videos = document.querySelectorAll("video");
+const videos = document.querySelectorAll(".full-video");
 
 const observer = new IntersectionObserver((entries) => {
 
@@ -7,10 +7,16 @@ const observer = new IntersectionObserver((entries) => {
         const video = entry.target;
 
         if (entry.isIntersecting) {
-            video.play();
+
+            video.play().catch(error => {
+                console.log("Autoplay blocked:", error);
+            });
+
         } else {
+
             video.pause();
             video.currentTime = 0;
+
         }
 
     });
@@ -19,10 +25,10 @@ const observer = new IntersectionObserver((entries) => {
     threshold: 0.8
 });
 
-
 videos.forEach(video => {
     observer.observe(video);
 });
+
 
 const feed = document.querySelector(".post-feed");
 
@@ -111,25 +117,7 @@ document.querySelectorAll(".follow-button").forEach(button => {
 
 
 
-async function sharePost(postId) {
 
-    const shareUrl =
-        `${window.location.origin}/explore/video/${postId}`;
-
-    if (navigator.share) {
-
-        await navigator.share({
-            title: "Check out this video",
-            url: shareUrl
-        });
-
-    } else {
-
-        await navigator.clipboard.writeText(shareUrl);
-
-        alert("Link copied!");
-    }
-}
 
 
 
@@ -188,18 +176,29 @@ function deleteVideo(postId) {
 
 
 function sharePost(postId) {
-    const url = `${window.location.origin}/explore/post/${postId}`;
+
+    const shareUrl =
+        `${window.location.origin}/explore/post/${postId}`;
 
     if (navigator.share) {
+
         navigator.share({
             title: "Happstat",
             text: "Check out this reel on Happstat",
-            url: url
+            url: shareUrl
         }).catch(error => {
             console.log("Share cancelled:", error);
         });
+
     } else {
-        navigator.clipboard.writeText(url);
-        alert("Link copied");
+
+        navigator.clipboard.writeText(shareUrl)
+            .then(() => {
+                alert("Link copied!");
+            })
+            .catch(error => {
+                console.error("Copy failed:", error);
+            });
+
     }
 }
