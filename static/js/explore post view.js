@@ -1,3 +1,8 @@
+
+
+
+document.addEventListener("DOMContentLoaded", () => {
+
 const videos = document.querySelectorAll(".full-video");
 
 const observer = new IntersectionObserver((entries) => {
@@ -22,7 +27,7 @@ const observer = new IntersectionObserver((entries) => {
     });
 
 }, {
-    threshold: 0.8
+    threshold: 0.7
 });
 
 videos.forEach(video => {
@@ -202,3 +207,4 @@ function sharePost(postId) {
 
     }
 }
+});
