@@ -184,3 +184,22 @@ function deleteVideo(postId) {
         alert("Something went wrong.");
     });
 }
+
+
+
+function sharePost(postId) {
+    const url = `${window.location.origin}/explore/post/${postId}`;
+
+    if (navigator.share) {
+        navigator.share({
+            title: "Happstat",
+            text: "Check out this reel on Happstat",
+            url: url
+        }).catch(error => {
+            console.log("Share cancelled:", error);
+        });
+    } else {
+        navigator.clipboard.writeText(url);
+        alert("Link copied");
+    }
+}
