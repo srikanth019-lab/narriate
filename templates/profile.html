@@ -29,7 +29,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <header class="top-bar">
     <header class="top-bar">
 
-   {% if current_user_id %}
+{% if session.get("user_id") == user.id %}
 <a href="{{ url_for('explore') }}" class="explore-link">
     explore
 </a>
