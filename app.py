@@ -539,7 +539,7 @@ def view_profile(username):
         followers_count=followers_count,
         following_count=following_count,
         emoji_counts=emoji_counts,
-        video_posts=video_posts
+        explore_posts=video_posts
     )
 
 @app.route("/logout")
@@ -795,6 +795,8 @@ def follow_status(user_id):
 
 @app.route('/explore')
 def explore():
+    logged_in_user_id = session.get("user_id")
+
     posts = EmojiPost.query.order_by(
         EmojiPost.created_at.desc()
     ).all()
@@ -807,7 +809,7 @@ def explore():
         'explore.html',
         posts=posts,
         video_posts=video_posts,
-        logged_in_user_id=session.get('user_id')
+        logged_in_user_id=logged_in_user_id
     )
 
 def new_func():
