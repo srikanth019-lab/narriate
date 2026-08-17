@@ -41,19 +41,29 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     enctype="multipart/form-data"
     id="uploadForm"
 >
-
+ <!-- Camera -->
     <input
         type="file"
-        id="imageInput"
+        id="cameraInput"
         name="image"
         hidden
         accept="image/*,video/*"
+        capture="environment"
+    >
+
+      <!-- Photos / Gallery -->
+            <input
+                type="file"
+                id="photosInput"
+                name="image"
+                hidden
+                accept="image/*,video/*"
     >
     {% if logged_in_user_id ==profile_user.id%}
     <button
         type="button"
         class="add-btn"
-        onclick="document.getElementById('imageInput').click();"
+        onclick="toggleUploadMenu()"
     >
         ＋
     </button>
@@ -89,41 +99,209 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     {% endfor %}
 
 </div>
+<!-- ============================= -->
+<!-- UPLOAD MENU -->
+<!-- ============================= -->
+
+<div
+    id="uploadMenu"
+    class="upload-menu"
+>
+
+    <button
+        type="button"
+        class="upload-option"
+        onclick="openCamera()"
+    >
+
+        <span class="upload-icon">
+            📷
+        </span>
+
+        <span>
+            Camera
+        </span>
+
+    </button>
+
+
+    <button
+        type="button"
+        class="upload-option"
+        onclick="openPhotos()"
+    >
+
+        <span class="upload-icon">
+            🖼️
+        </span>
+
+        <span>
+            Photos
+        </span>
+
+    </button>
+
+</div>
+
 
 </div><script>
-const input = document.getElementById("imageInput");
+const uploadMenu = document.getElementById("uploadMenu");
+
+const cameraInput = document.getElementById("cameraInput");
+
+const photosInput = document.getElementById("photosInput");
+
 const form = document.getElementById("uploadForm");
 
-input.addEventListener("change", function () {
-    const file = this.files[0];
+
+// ========================================
+// OPEN / CLOSE UPLOAD MENU
+// ========================================
+
+function toggleUploadMenu() {
+
+    uploadMenu.classList.toggle("show");
+
+}
+
+
+// ========================================
+// CAMERA
+// ========================================
+
+function openCamera() {
+
+    uploadMenu.classList.remove("show");
+
+    cameraInput.click();
+
+}
+
+
+// ========================================
+// PHOTOS
+// ========================================
+
+function openPhotos() {
+
+    uploadMenu.classList.remove("show");
+
+    photosInput.click();
+
+}
+
+
+// ========================================
+// HANDLE IMAGE / VIDEO
+// ========================================
+
+function handleFile(file, input) {
+
     if (!file) return;
 
+
+    // IMAGE
     if (file.type.startsWith("image/")) {
+
         form.submit();
+
         return;
+
     }
 
+
+    // VIDEO
     if (file.type.startsWith("video/")) {
+
         const video = document.createElement("video");
+
         video.preload = "metadata";
 
+
         video.onloadedmetadata = function () {
+
             URL.revokeObjectURL(video.src);
 
+
+            // Maximum 60 seconds
             if (video.duration > 60) {
+
                 alert("Video must be 1 minute or less.");
+
                 input.value = "";
+
                 return;
+
             }
 
+
             form.submit();
+
         };
 
+
         video.src = URL.createObjectURL(file);
+
+        return;
+
     }
-    
+
+
+    // Invalid file
+    alert("Please select an image or video.");
+
+    input.value = "";
+
+}
+
+
+// ========================================
+// CAMERA RESULT
+// ========================================
+
+cameraInput.addEventListener("change", function () {
+
+    handleFile(this.files[0], this);
+
 });
+
+
+// ========================================
+// PHOTOS RESULT
+// ========================================
+
+photosInput.addEventListener("change", function () {
+
+    handleFile(this.files[0], this);
+
+});
+
+
+// ========================================
+// CLOSE MENU WHEN CLICKING OUTSIDE
+// ========================================
+
+document.addEventListener("click", function(event) {
+
+    const button = document.querySelector(".add-btn");
+
+    if (!button) return;
+
+
+    if (
+        uploadMenu.classList.contains("show") &&
+        !uploadMenu.contains(event.target) &&
+        !button.contains(event.target)
+    ) {
+
+        uploadMenu.classList.remove("show");
+
+    }
+
+});
+
 </script>
+
 
 </body>
 </html>
