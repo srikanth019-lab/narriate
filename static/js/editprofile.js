@@ -19,5 +19,5 @@ fileInput.addEventListener("change", function () {
 
 });
 
-Navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" },audio: false });
+
 

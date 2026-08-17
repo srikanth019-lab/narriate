@@ -41,19 +41,48 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         id="uploadForm"
     >
 
-        <input
-            type="file"
-            id="videoInput"
-            name="video"
-            hidden
-            accept="video/*"
-            capture="environment"
-        >
+
+     <!-- Camera / Gallery options -->
+    <div id="uploadOptions" style="display:none;">
 
         <button
             type="button"
+            onclick="openCamera()"
+        >
+            Camera
+        </button>
+
+        <button
+            type="button"
+            onclick="openGallery()"
+        >
+            Gallery
+        </button>
+
+    </div>
+
+      !-- Gallery video picker -->
+    <input
+        type="file"
+        id="galleryInput"
+        name="video"
+        accept="video/*"
+        hidden
+    >
+
+    <!-- Camera video capture -->
+    <input
+        type="file"
+        id="cameraInput"
+        name="video"
+        accept="video/*"
+        capture="environment"
+        hidden
+    >
+        <button
+            type="button"
             class="add-btn"
-            onclick="document.getElementById('videoInput').click();"
+            onclick="openUploadOptions()"
         >
             ＋
         </button>
@@ -94,12 +123,52 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <script>
 const input = document.getElementById("videoInput");
 const form = document.getElementById("uploadForm");
+const galleryInput = document.getElementById("galleryInput");
+const cameraInput = document.getElementById("cameraInput");
+const uploadOptions = document.getElementById("uploadOptions");
 
-if (input && form) {
 
-    input.addEventListener("change", function () {
+function openUploadOptions() {
 
-        const file = this.files[0];
+    if (uploadOptions.style.display === "none") {
+        uploadOptions.style.display = "block";
+    } else {
+        uploadOptions.style.display = "none";
+    }
+
+}
+
+
+function openCamera() {
+
+    cameraInput.click();
+
+}
+
+
+function openGallery() {
+
+    galleryInput.click();
+
+}
+
+
+galleryInput.addEventListener("change", function () {
+
+    validateVideo(this);
+
+});
+
+
+cameraInput.addEventListener("change", function () {
+
+    validateVideo(this);
+
+});
+
+
+function validateVideo(input) {
+        const file = input.files[0];
 
         if (!file) return;
 
@@ -108,7 +177,6 @@ if (input && form) {
             input.value = "";
             return;
         }
-        Navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" },audio: false });
 
         const video = document.createElement("video");
 
@@ -128,8 +196,7 @@ if (input && form) {
         };
 
         video.src = URL.createObjectURL(file);
-    });
-}
+    }
 </script>
 
 
