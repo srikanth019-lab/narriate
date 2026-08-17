@@ -43,17 +43,27 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
         <input
             type="file"
-            id="videoInput"
+            id="cameraInput"
             name="video"
             hidden
             accept="video/*"
+            capture="environment"
+    >
            
-        >
+     <!-- Photos: select video from gallery -->
+    <input
+        type="file"
+        id="photosInput"
+        name="video"
+        hidden
+        accept="video/*"
+    >
+
 
         <button
             type="button"
             class="add-btn"
-            onclick="document.getElementById('videoInput').click();"
+            onclick="toggleUploadMenu()"
         >
             ＋
         </button>
@@ -88,48 +98,155 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     {% endfor %}
 
 </div>
+<!-- Upload menu -->
+<div id="uploadMenu" class="upload-menu">
+
+    <button type="button" class="upload-option" onclick="openCamera()">
+        <span class="upload-icon">📷</span>
+        <span>Camera</span>
+    </button>
+
+    <button type="button" class="upload-option" onclick="openPhotos()">
+        <span class="upload-icon">🖼️</span>
+        <span>Photos</span>
+    </button>
+
+</div>
    
 
 </div> 
     <script>
-const input = document.getElementById("videoInput");
+
+const uploadMenu = document.getElementById("uploadMenu");
+
+const cameraInput = document.getElementById("cameraInput");
+const photosInput = document.getElementById("photosInput");
+
 const form = document.getElementById("uploadForm");
 
-if (input && form) {
 
-    input.addEventListener("change", function () {
+// Open / close menu
 
-        const file = this.files[0];
+function toggleUploadMenu() {
 
-        if (!file) return;
+    uploadMenu.classList.toggle("show");
 
-        if (!file.type.startsWith("video/")) {
-            alert("Please select a video.");
-            input.value = "";
-            return;
-        }
-      
-        const video = document.createElement("video");
-
-        video.preload = "metadata";
-
-        video.onloadedmetadata = function () {
-
-            URL.revokeObjectURL(video.src);
-
-            if (video.duration > 60) {
-                alert("Video must be 1 minute or less.");
-                input.value = "";
-                return;
-            }
-
-            form.submit();
-        };
-
-        video.src = URL.createObjectURL(file);
-    });
 }
+
+
+// Camera
+
+function openCamera() {
+
+    uploadMenu.classList.remove("show");
+
+    cameraInput.click();
+
+}
+
+
+// Photos
+
+function openPhotos() {
+
+    uploadMenu.classList.remove("show");
+
+    photosInput.click();
+
+}
+
+
+// Check video
+
+function handleVideo(file, input) {
+
+    if (!file) return;
+
+
+    if (!file.type.startsWith("video/")) {
+
+        alert("Please select a video.");
+
+        input.value = "";
+
+        return;
+
+    }
+
+
+    const video = document.createElement("video");
+
+    video.preload = "metadata";
+
+
+    video.onloadedmetadata = function () {
+
+        URL.revokeObjectURL(video.src);
+
+
+        if (video.duration > 60) {
+
+            alert("Video must be 1 minute or less.");
+
+            input.value = "";
+
+            return;
+
+        }
+
+
+        form.submit();
+
+    };
+
+
+    video.src = URL.createObjectURL(file);
+
+}
+
+
+// Camera result
+
+cameraInput.addEventListener("change", function () {
+
+    handleVideo(this.files[0], this);
+
+});
+
+
+// Photos result
+
+photosInput.addEventListener("change", function () {
+
+    handleVideo(this.files[0], this);
+
+});
+
+
+// Close menu when clicking outside
+
+document.addEventListener("click", function(event) {
+
+    const button = document.querySelector(".add-btn");
+
+    const menu = document.getElementById("uploadMenu");
+
+
+    if (
+        menu.classList.contains("show") &&
+        !menu.contains(event.target) &&
+        !button.contains(event.target)
+    ) {
+
+        menu.classList.remove("show");
+
+    }
+
+});
+
 </script>
+
+
 
 
 </body>
