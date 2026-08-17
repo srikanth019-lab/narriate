@@ -47,7 +47,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             name="video"
             hidden
             accept="video/*"
-            capture="environment"
+           
         >
 
         <button
@@ -108,8 +108,7 @@ if (input && form) {
             input.value = "";
             return;
         }
-        Navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" },audio: false });
-
+      
         const video = document.createElement("video");
 
         video.preload = "metadata";
