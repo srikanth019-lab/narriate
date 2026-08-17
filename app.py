@@ -600,7 +600,7 @@ def emoji_gallery(username, emoji_id):
         file = request.files.get("image")
 
         if not file:
-            return redirect(url_for("emoji_gallery", emoji_id=emoji.id))
+            return redirect(url_for("emoji_gallery", username=username, emoji_id=emoji.id))
 
        
         # Detect media type
