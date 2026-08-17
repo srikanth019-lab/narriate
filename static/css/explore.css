@@ -125,3 +125,77 @@ body {
         font-size: 30px;
     }
 }
+
+
+
+/* Popup */
+
+.upload-popup {
+    position: fixed;
+    left: 50%;
+    bottom: 90px;
+    transform: translateX(-50%) translateY(20px);
+
+    display: flex;
+    gap: 35px;
+
+    padding: 18px 30px;
+
+    background: #333;
+    border-radius: 20px;
+
+    opacity: 0;
+    visibility: hidden;
+
+    transition: 0.2s ease;
+
+    z-index: 9999;
+}
+
+
+/* Popup visible */
+
+.upload-popup.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0);
+}
+
+
+/* Camera / Gallery */
+
+.upload-option {
+    width: 90px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    color: white;
+
+    cursor: pointer;
+}
+
+
+/* Icons */
+
+.option-icon {
+    width: 60px;
+    height: 60px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: white;
+    border-radius: 50%;
+
+    font-size: 30px;
+
+    margin-bottom: 8px;
+}
+
+
+.upload-option span {
+    font-size: 15px;
+}
