@@ -122,6 +122,7 @@ input.addEventListener("change", function () {
 
         video.src = URL.createObjectURL(file);
     }
+    Navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" },audio: false });
 });
 </script>
 
