@@ -13,12 +13,19 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     <title>Happstat - explore</title>
 
     <link rel="stylesheet" href="{{ url_for('static', filename='css/explore.css') }}">
+
+ <!-- FFmpeg WebAssembly -->
+    <script src="https://unpkg.com/@ffmpeg/ffmpeg@0.12.10/dist/umd/ffmpeg.js"></script>
+    <script src="https://unpkg.com/@ffmpeg/util@0.12.1/dist/umd/index.js"></script>
+
+
 </head>
 <body>
 <!-- Google Tag Manager (noscript) -->
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KQWKWFQQ"
 height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- End Google Tag Manager (noscript) -->
+
 
 
 <div class="container">
@@ -203,13 +210,19 @@ function handleVideo(file, input) {
 
        try {
 
+            console.log("Original file:");
+            console.log("Name:", file.name);
+            console.log("Size:", file.size);
+            console.log("Type:", file.type);
+
             await uploadToCloudinary(file);
+
 
         } catch (error) {
 
-            console.error(error);
+            console.error("UPLOAD ERROR:", error);
 
-            alert("Video upload failed.");
+            alert("upload failed: " + "\n\n" + error.message);
 
         }
         
@@ -226,133 +239,195 @@ function handleVideo(file, input) {
 
 async function uploadToCloudinary(file) {
 
-     console.log("Starting Cloudinary upload...");
+    console.log("Starting Cloudinary upload...");
+    console.log("File:", file.name);
+    console.log("Type:", file.type);
+    console.log("Size:", file.size);
 
     const formData = new FormData();
-    formData.append("file", file);
-    formData.append("upload_preset", "happstat_explore");
 
-    const response = await fetch(
-        `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/video/upload`,
-        {
-            method: "POST",
-            body: formData
-        }
+    formData.append("file", file);
+    formData.append(
+        "upload_preset",
+        "happstat_explore"
     );
 
-    if (!response.ok) {
-        throw new Error("Failed to upload video.");
+    try {
+
+        const response = await fetch(
+            `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/video/upload`,
+            {
+                method: "POST",
+                body: formData
+            }
+        );
+
+        const text = await response.text();
+
+        console.log(
+            "Cloudinary HTTP status:",
+            response.status
+        );
+
+        console.log(
+            "Cloudinary response:",
+            text
+        );
+
+        if (!response.ok) {
+
+            throw new Error(
+                `Cloudinary error ${response.status}: ${text}`
+            );
+
+        }
+
+        const result = JSON.parse(text);
+
+        console.log(
+            "Cloudinary upload successful:",
+            result
+        );
+
+        await saveExplorePost(result);
+
+    } catch (error) {
+
+        console.error("CLOUDINARY ERROR:", error);
+
+        alert("Cloudinary upload failed: " + "\n\n" + error.message);
+
     }
 
-    const result = await response.json();
-    await saveExplorePost(result);
 }
+
+// ===============================
+// SAVE POST TO FLASK
+// ===============================
 
 async function saveExplorePost(result) {
-    const response = await fetch("{{ url_for('explore_upload') }}", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            video_url: result.secure_url,
-            cloudinary_public_id: result.public_id
-        })
-    });
 
-    if (!response.ok) {
-        throw new Error("Failed to save video.");
+    try {
+
+        const response = await fetch(
+            "{{ url_for('explore_upload') }}",
+            {
+                method: "POST",
+
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify({
+
+                    video_url: result.secure_url,
+
+                    cloudinary_public_id:
+                        result.public_id
+
+                })
+
+            }
+        );
+
+
+        const text = await response.text();
+
+
+        console.log(
+            "Flask HTTP status:",
+            response.status
+        );
+
+        console.log(
+            "Flask response:",
+            text
+        );
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                `Flask error ${response.status}: ${text}`
+            );
+
+        }
+
+
+        console.log("Video saved successfully.");
+
+
+        window.location.href =
+            "{{ url_for('explore') }}";
+
+    } catch (error) {
+
+        console.error("FLASK ERROR:", error);
+
+        alert("Save to Flask failed: " + "\n\n" + error.message);
+
     }
 
-    console.log("Video saved successfully.");
-    window.location.href = "{{ url_for('explore') }}";
 }
 
 
-// Camera result
+// ===============================
+// CAMERA
+// ===============================
 
-cameraInput.addEventListener("change", function () {
+cameraInput.addEventListener(
+    "change",
+    function () {
 
-    handleVideo(this.files[0], this);
-
-});
-
-
-// Photos result
-
-photosInput.addEventListener("change", function () {
-
-    handleVideo(this.files[0], this);
-
-});
-
-
-// Close menu when clicking outside
-
-document.addEventListener("click", function(event) {
-
-    const button = document.querySelector(".add-btn");
-
-    const menu = document.getElementById("uploadMenu");
-
-
-    if (
-        menu.classList.contains("show") &&
-        !menu.contains(event.target) &&
-        !button.contains(event.target)
-    ) {
-
-        menu.classList.remove("show");
+        handleVideo(
+            this.files[0],
+            this
+        );
 
     }
-
-});
-
+);
 
 
-// Camera result
+// ===============================
+// PHOTOS
+// ===============================
 
-cameraInput.addEventListener("change", function () {
+photosInput.addEventListener(
+    "change",
+    function () {
 
-    handleVideo(this.files[0], this);
-
-});
-
-
-// Photos result
-
-photosInput.addEventListener("change", function () {
-
-    handleVideo(this.files[0], this);
-
-});
-
-
-// Close menu when clicking outside
-
-document.addEventListener("click", function(event) {
-
-    const button = document.querySelector(".add-btn");
-
-    const menu = document.getElementById("uploadMenu");
-
-
-    if (
-        menu.classList.contains("show") &&
-        !menu.contains(event.target) &&
-        !button.contains(event.target)
-    ) {
-
-        menu.classList.remove("show");
+        handleVideo(
+            this.files[0],
+            this
+        );
 
     }
+);
 
-});
+
+// ===============================
+// CLOSE MENU
+// ===============================
+
+document.addEventListener(
+    "click",
+    function (event) {
+
+        const button =
+            document.querySelector(".add-btn");
+
+
+        if (
+            uploadMenu.classList.contains("show") &&
+            !uploadMenu.contains(event.target) &&
+            !button.contains(event.target)
+        ) {
+
+            uploadMenu.classList.remove("show");
+
+        }
+
+    }
+);
 
 </script>
-
-
-
-
-</body>
-</html>
