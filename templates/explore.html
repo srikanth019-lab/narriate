@@ -125,6 +125,13 @@ const photosInput = document.getElementById("photosInput");
 const form = document.getElementById("uploadForm");
 
 
+
+// Cloudinary settings
+const CLOUDINARY_CLOUD_NAME = "gxy7cvmb";
+const CLOUDINARY_UPLOAD_PRESET = "happstat_explore";
+
+
+
 // Open / close menu
 
 function toggleUploadMenu() {
@@ -179,7 +186,7 @@ function handleVideo(file, input) {
     video.preload = "metadata";
 
 
-    video.onloadedmetadata = function () {
+    video.onloadedmetadata = async function () {
 
         URL.revokeObjectURL(video.src);
 
@@ -194,8 +201,18 @@ function handleVideo(file, input) {
 
         }
 
+       try {
 
-        form.submit();
+            await uploadToCloudinary(file);
+
+        } catch (error) {
+
+            console.error(error);
+
+            alert("Video upload failed.");
+
+        }
+        
 
     };
 
@@ -203,6 +220,94 @@ function handleVideo(file, input) {
     video.src = URL.createObjectURL(file);
 
 }
+
+
+// Send Cloudinary information to Flask
+
+async function uploadToCloudinary(file) {
+
+     console.log("Starting Cloudinary upload...");
+
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", "happstat_explore");
+
+    const response = await fetch(
+        `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/video/upload`,
+        {
+            method: "POST",
+            body: formData
+        }
+    );
+
+    if (!response.ok) {
+        throw new Error("Failed to upload video.");
+    }
+
+    const result = await response.json();
+    await saveExplorePost(result);
+}
+
+async function saveExplorePost(result) {
+    const response = await fetch("{{ url_for('explore_upload') }}", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            video_url: result.secure_url,
+            cloudinary_public_id: result.public_id
+        })
+    });
+
+    if (!response.ok) {
+        throw new Error("Failed to save video.");
+    }
+
+    console.log("Video saved successfully.");
+    window.location.href = "{{ url_for('explore') }}";
+}
+
+
+// Camera result
+
+cameraInput.addEventListener("change", function () {
+
+    handleVideo(this.files[0], this);
+
+});
+
+
+// Photos result
+
+photosInput.addEventListener("change", function () {
+
+    handleVideo(this.files[0], this);
+
+});
+
+
+// Close menu when clicking outside
+
+document.addEventListener("click", function(event) {
+
+    const button = document.querySelector(".add-btn");
+
+    const menu = document.getElementById("uploadMenu");
+
+
+    if (
+        menu.classList.contains("show") &&
+        !menu.contains(event.target) &&
+        !button.contains(event.target)
+    ) {
+
+        menu.classList.remove("show");
+
+    }
+
+});
+
 
 
 // Camera result

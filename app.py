@@ -187,6 +187,17 @@ class ExplorePost(db.Model):
         nullable=False
     )
 
+    cloudinary_public_id = db.Column(
+        db.String(500),
+        nullable=True
+    )
+
+    status = db.Column(
+        db.String(20),
+        nullable=False,
+        default='uploading'
+    )
+
     created_at = db.Column(
         db.DateTime,
         default=datetime.utcnow,
@@ -200,7 +211,6 @@ class ExplorePost(db.Model):
             lazy=True
         )
     )
-
 
 
 
@@ -801,7 +811,9 @@ def explore():
         EmojiPost.created_at.desc()
     ).all()
 
-    video_posts = ExplorePost.query.order_by(
+    video_posts = ExplorePost.query.filter_by(
+        status='ready'
+    ).order_by(
         ExplorePost.created_at.desc()
     ).all()
 
@@ -811,6 +823,7 @@ def explore():
         video_posts=video_posts,
         logged_in_user_id=logged_in_user_id
     )
+
 
 def new_func():
     posts = EmojiPost.query.order_by(
@@ -823,32 +836,30 @@ def new_func():
 def explore_upload():
 
     if 'user_id' not in session:
-        return redirect(url_for('login'))
+        return jsonify({"error": "Not logged in"}), 401
 
-    file = request.files.get('video')
+    data = request.get_json()
 
-    if not file:
-        return redirect(url_for('explore'))
+    video_url = data.get("video_url")
+    cloudinary_public_id = data.get("cloudinary_public_id")
 
-     # Upload video to Cloudinary
-    result = cloudinary.uploader.upload(
-        file,
-        resource_type="video"
-    )
+    if not video_url or not cloudinary_public_id:
+        return jsonify({"error": "Missing Cloudinary data"}), 400
 
-    # Get Cloudinary video URL
-    video_url = result['secure_url']
-
-    # Create Explore post
     post = ExplorePost(
-        user_id=session['user_id'],
-        video_url=video_url
+        user_id=session["user_id"],
+        video_url=video_url,
+        cloudinary_public_id=cloudinary_public_id,
+        status="ready"
     )
 
     db.session.add(post)
     db.session.commit()
 
-    return redirect(url_for('explore'))
+    return jsonify({
+        "success": True,
+        "post_id": post.id
+    })
 
 
 
