@@ -26,9 +26,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
     <a class="close-btn" href="javascript:history.back()">✕</a>
 
-  
-
-       
+</div>
    
 <div class="post-feed">
 
@@ -83,6 +81,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         </button>
 
     </div>
+
+    <button
+    type="button"
+    class="add-btn"
+    onclick="handleSharePlus()"
+>
+    ＋
+</button>
 
 
 <!-- Creator information -->
@@ -149,9 +155,27 @@ window.addEventListener("load", function() {
         });
     }
 });
+
+function handleSharePlus() {
+
+   
+    if (!loggedIn) {
+
+        window.location.href =
+            "{{ url_for('signup') }}?next=explore";
+
+        return;
+    }
+
+    window.location.href =
+        "{{ url_for('explore') }}";
+}
+
+
 </script>
 
 <script src="{{ url_for('static', filename='js/explore post view.js') }}"></script>
 
 </body>
-</html> 
+</html>
+ 

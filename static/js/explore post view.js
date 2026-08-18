@@ -214,3 +214,6 @@ window.deleteVideo = deleteVideo;
 window.toggleVideoMenu = toggleVideoMenu;
 
 });
+
+
+
