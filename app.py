@@ -43,13 +43,14 @@ print("APP FILE:", os.path.abspath(__file__))
 print("STATIC FOLDER:", app.static_folder)
 load_dotenv()
 
-print("DATABASE_URL =", os.getenv("DATABASE_URL"))
+
 
 app.config["REMEMBER_COOKIE_DURATION"] = timedelta(days=365)
 
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
 app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL")
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+
 
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
@@ -643,10 +644,11 @@ def emoji_gallery(username, emoji_id):
 
         return redirect(url_for("emoji_gallery", username=profile_user.username, emoji_id=emoji.id))
 
- # This runs for GET requests
-    posts = EmojiPost.query.filter_by(emoji_id=emoji.id).all()
-    owner_id = posts[0].user_id if posts else None
-
+    # This runs for GET requests
+    posts = EmojiPost.query.filter_by(
+        user_id=profile_user.id,
+        emoji_id=emoji.id
+    ).order_by(EmojiPost.created_at.desc()).all()
     return render_template(
         "emoji gallery.html",
         emoji=emoji,
@@ -659,7 +661,10 @@ def emoji_gallery(username, emoji_id):
 @app.route("/post/<int:post_id>")
 def view_post(post_id):
     post = EmojiPost.query.get_or_404(post_id)
-    posts = EmojiPost.query.filter_by(emoji_id=post.emoji_id).all()
+    posts = EmojiPost.query.filter_by(
+    user_id=post.user_id,
+    emoji_id=post.emoji_id
+).order_by(EmojiPost.created_at.desc()).all()
 
     return render_template("view post.html", posts=posts, current_post=post,  logged_in_user_id=session.get("user_id")
     )

@@ -42,19 +42,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     id="uploadForm"
 >
  <!-- Camera -->
-    <input
-        type="file"
-        id="cameraInput"
-        name="image"
-        hidden
-        accept="image/*"
-        capture="environment"
-    >
+          
 
       <!-- Photos / Gallery -->
             <input
                 type="file"
-                id="photosInput"
+                id="mediaInput"
                 name="image"
                 hidden
                 accept="image/*,video/*"
@@ -146,140 +139,80 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
 </div><script>
 const uploadMenu = document.getElementById("uploadMenu");
-
-const cameraInput = document.getElementById("cameraInput");
-
-const photosInput = document.getElementById("photosInput");
-
+const mediaInput = document.getElementById("mediaInput");
 const form = document.getElementById("uploadForm");
 
-
-// ========================================
-// OPEN / CLOSE UPLOAD MENU
-// ========================================
-
 function toggleUploadMenu() {
-
     uploadMenu.classList.toggle("show");
-
 }
-
-
-// ========================================
-// CAMERA
-// ========================================
 
 function openCamera() {
-
     uploadMenu.classList.remove("show");
 
-    cameraInput.click();
+    mediaInput.value = "";
+    mediaInput.accept = "image/*";
+    mediaInput.setAttribute("capture", "environment");
 
+    mediaInput.click();
 }
-
-
-// ========================================
-// PHOTOS
-// ========================================
 
 function openPhotos() {
-
     uploadMenu.classList.remove("show");
 
-    photosInput.click();
+    mediaInput.value = "";
+    mediaInput.accept = "image/*,video/*";
+    mediaInput.removeAttribute("capture");
 
+    mediaInput.click();
 }
 
+function handleFile(file) {
 
-// ========================================
-// HANDLE IMAGE / VIDEO
-// ========================================
-
-function handleFile(file, input) {
-
-    if (!file) return;
-
-
-    // IMAGE
-    if (file.type.startsWith("image/")) {
-
-        form.submit();
-
+    if (!file) {
+        console.log("No file selected");
         return;
-
     }
 
+    console.log("Selected:", file.name);
+    console.log("Type:", file.type);
+    console.log("Size:", file.size);
 
-    // VIDEO
+    if (file.type.startsWith("image/")) {
+        console.log("Uploading image...");
+        form.submit();
+        return;
+    }
+
     if (file.type.startsWith("video/")) {
 
         const video = document.createElement("video");
-
         video.preload = "metadata";
-
 
         video.onloadedmetadata = function () {
 
             URL.revokeObjectURL(video.src);
 
-
-            // Maximum 60 seconds
             if (video.duration > 60) {
-
                 alert("Video must be 1 minute or less.");
-
-                input.value = "";
-
+                mediaInput.value = "";
                 return;
-
             }
 
-
+            console.log("Uploading video...");
             form.submit();
-
         };
 
-
         video.src = URL.createObjectURL(file);
-
         return;
-
     }
 
-
-    // Invalid file
     alert("Please select an image or video.");
-
-    input.value = "";
-
+    mediaInput.value = "";
 }
 
-
-// ========================================
-// CAMERA RESULT
-// ========================================
-
-cameraInput.addEventListener("change", function () {
-
-    handleFile(this.files[0], this);
-
+mediaInput.addEventListener("change", function () {
+    handleFile(this.files[0]);
 });
-
-
-// ========================================
-// PHOTOS RESULT
-// ========================================
-
-photosInput.addEventListener("change", function () {
-
-    handleFile(this.files[0], this);
-
-});
-
-
-// ========================================
-// CLOSE MENU WHEN CLICKING OUTSIDE
-// ========================================
 
 document.addEventListener("click", function(event) {
 
@@ -287,17 +220,13 @@ document.addEventListener("click", function(event) {
 
     if (!button) return;
 
-
     if (
         uploadMenu.classList.contains("show") &&
         !uploadMenu.contains(event.target) &&
         !button.contains(event.target)
     ) {
-
         uploadMenu.classList.remove("show");
-
     }
-
 });
 
 </script>
