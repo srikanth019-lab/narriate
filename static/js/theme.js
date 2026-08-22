@@ -2,30 +2,27 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const toggle = document.getElementById("themeToggle");
 
-    if (!toggle) return;
-
+    // Get saved theme
     const savedTheme = localStorage.getItem("theme") || "light";
 
-    document.documentElement.setAttribute(
-        "data-theme",
-        savedTheme
-    );
+    // Apply saved theme
+    document.documentElement.setAttribute("data-theme", savedTheme);
 
-    toggle.checked = savedTheme === "dark";
+    // Set toggle position
+    if (toggle) {
+        toggle.checked = savedTheme === "dark";
 
+        toggle.addEventListener("change", function () {
 
-    toggle.addEventListener("change", function () {
+            const newTheme = this.checked ? "dark" : "light";
 
-        const newTheme = this.checked
-            ? "dark"
-            : "light";
+            // Apply theme
+            document.documentElement.setAttribute("data-theme", newTheme);
 
-        document.documentElement.setAttribute(
-            "data-theme",
-            newTheme
-        );
+            // Save theme
+            localStorage.setItem("theme", newTheme);
 
-        localStorage.setItem("theme", newTheme);
-    });
+        });
+    }
 
 });
