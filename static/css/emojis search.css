@@ -9,6 +9,19 @@
     width: 100%;
     box-sizing: border-box;
     padding: 12px;
+    background: var(--input-bg);
+    color: var(--text);
+    border: 1px solid var(--input-border);
+    border-radius: 12px;
+    outline: none;
+}
+
+#emojiSearch::placeholder {
+    color: var(--muted);
+}
+
+#emojiSearch:focus {
+    border-color: #2563eb;
 }
 
 .emoji-item {
@@ -21,7 +34,21 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
+    border-radius: 10px;
+    transition: background 0.2s ease;
 }
+
+
+.emoji-item:hover {
+    background: var(--input-bg);
+    transform: scale(1.05);
+}
+
+.emoji-item:active {
+    transform: scale(0.95);
+}
+
+
 
 .emoji-grid {
     display: grid;

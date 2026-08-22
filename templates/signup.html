@@ -12,6 +12,13 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     <meta charset="UTF-8">
     <title>Happstat - Sign Up</title>
 
+
+
+    <head>
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/global.css') }}">
+
+
     <!-- Link CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/signup.css') }}">
 
@@ -56,5 +63,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
 <script src="{{ url_for('static', filename='js/signup.js') }}"></script>
 
+
+<script src="{{ url_for('static', filename='js/theme.js') }}"></script>
 </body>
 </html>

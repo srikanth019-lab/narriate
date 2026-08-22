@@ -6,8 +6,8 @@
 
 body {
     font-family: Arial, sans-serif;
-    background: #fff;
-    color: #000;
+    background: var(--bg);
+    color: var(--text);
 }
 
 .container {
@@ -23,17 +23,17 @@ body {
     align-items: center;
     justify-content: space-between;
     padding: 14px 16px;
-    border-bottom: 1px solid #e5e5e5;
+    border-bottom: 1px solid var(--border);
     position: sticky;
     top: 0;
-    background: #fff;
+    background: var(--bg);
     z-index: 100;
 }
 
 .back-btn,
 .add-btn {
     text-decoration: none;
-    color: #000;
+    color: var(--text);
     font-size: 28px;
     font-weight: bold;
 }
@@ -59,6 +59,7 @@ body {
     padding: 14px 16px;
     font-size: 16px;
     font-weight: 500;
+    color: var(--muted);
 }
 
 /* ---------- Gallery ---------- */
@@ -72,7 +73,7 @@ body {
 .gallery-item {
     aspect-ratio: 1 / 1;
     overflow: hidden;
-    background: #f2f2f2;
+    background: var(--input-bg);
 }
 
 .gallery-item img {
@@ -118,9 +119,10 @@ body {
 
     padding: 10px;
 
-    background: #1f1f1f;
+    background: var(--bg);
 
     border-radius: 22px;
+    border: 1px solid var(--border);
 
     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.45);
 
@@ -160,7 +162,7 @@ body {
 
     background: transparent;
 
-    color: white;
+    color: var(--text);
 
     font-size: 17px;
 
@@ -177,7 +179,7 @@ body {
 
 .upload-option:hover {
 
-    background: #2c2c2c;
+    background: var(--input-bg);
 
 }
 
@@ -198,7 +200,7 @@ body {
 
     justify-content: center;
 
-    background: #3a3a3a;
+    background: var(--input-bg);
 
     border-radius: 50%;
 

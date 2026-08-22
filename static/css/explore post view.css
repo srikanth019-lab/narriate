@@ -522,7 +522,9 @@ body {
     top: 60px;
     right: 15px;
 
-    background: white;
+    background: var(--card-bg);
+    color: var(--text);
+    border: 1px solid var(--border);
     border-radius: 8px;
 
     overflow: hidden;
@@ -545,4 +547,8 @@ body {
     padding: 12px 20px;
 
     cursor: pointer;
+}
+
+.delete-video-btn:hover {
+    background: var(--input-bg);
 }

@@ -2,13 +2,14 @@ body {
     margin: 0;
     background: black;
     overflow: hidden;
+    color: #fff;
 }
 
 .post-feed {
     height: 100vh;
     overflow-y: auto;
     scroll-snap-type: y mandatory;
-    scroll-behavior: touch;
+    scroll-behavior: smooth;
 }
 
 .post-item {

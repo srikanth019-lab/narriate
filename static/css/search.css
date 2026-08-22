@@ -6,8 +6,8 @@
 }
 
 body{
-    background:#fff;
-    color:#000;
+    background: var(--bg);
+    color: var(--text);
 }
 
 .search-page{
@@ -29,14 +29,15 @@ body{
 .search-box{
     display:flex;
     align-items:center;
-    background:#efefef;
+    background: var(--input-bg);
     border-radius:14px;
     padding:12px 15px;
     margin-bottom:20px;
+    border: 1px solid var(--input-border);
 }
 
 .search-box i{
-    color:#8e8e8e;
+    color: var(--muted);
     font-size:18px;
     margin-right:10px;
 }
@@ -46,7 +47,12 @@ body{
     border:none;
     outline:none;
     background:transparent;
+    color: var(--text);
     font-size:16px;
+}
+
+.search-box input::placeholder {
+    color: var(--muted);
 }
 
 #results{
@@ -58,9 +64,9 @@ body{
     display:flex;
     align-items:center;
     text-decoration:none;
-    color:#000;
+    color: var(--text);
     padding:12px 0;
-    border-bottom:1px solid #eee;
+    border-bottom:1px solid var(--border);
 }
 
 .user img{
@@ -84,10 +90,10 @@ body{
 
 .info p{
     font-size:14px;
-    color:#737373;
+    color: var(--muted);
 }
 
 .user:hover{
-    background:#fafafa;
+    background: var(--input-bg);
 }
 
