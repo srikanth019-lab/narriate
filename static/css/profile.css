@@ -121,7 +121,7 @@ body{
     font-size:15px;
     border:none;
     border-radius:8px;
-    background:#7096b2;
+    background:var(--input-border);
     color: white;
     cursor:pointer;
     transition:.2s;
@@ -129,7 +129,7 @@ body{
 }
 
 .edit-btn:hover{
-    background:#7096b2;
+    background:var(--input-border);
 }
 
 .emoji-search-box {
@@ -200,7 +200,7 @@ body{
 }
 
 .follow-btn:hover {
-    background-color: #1877f2;
+    background-color: var(--input-border);
     transform: scale(1.03);
 }
 
