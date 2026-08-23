@@ -26,6 +26,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
 </head>
 <body>
+
+     <div id="postingProgress" class="posting-progress">
+        <div id="postingProgressBar"
+             class="posting-progress-bar"></div>
+    </div>
+
 <!-- Google Tag Manager (noscript) -->
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KQWKWFQQ"
 height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
@@ -83,7 +89,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     </form>
     {% endif %}
 
-   
+  
 
     <!-- Gallery -->
 
@@ -136,7 +142,54 @@ const photosInput = document.getElementById("photosInput");
 
 const form = document.getElementById("uploadForm");
 
+const postingProgress = document.getElementById("postingProgress");
+const postingProgressBar = document.getElementById("postingProgressBar");
 
+
+function startPostingProgress() {
+    postingProgress.classList.add("active");
+    postingProgress.classList.remove("processing");
+
+    postingProgressBar.style.width = "0%";
+}
+
+
+function updatePostingProgress(percent) {
+    postingProgress.classList.add("active");
+    postingProgressBar.style.width = `${percent}%`;
+}
+
+
+function startProcessingProgress() {
+    postingProgress.classList.add("active");
+    postingProgress.classList.add("processing");
+
+    postingProgressBar.style.width = "90%";
+}
+
+
+function finishPostingProgress() {
+    postingProgress.classList.remove("processing");
+
+    postingProgressBar.style.width = "100%";
+
+    setTimeout(() => {
+        postingProgress.classList.remove("active");
+        postingProgressBar.style.width = "0%";
+    }, 300);
+}
+
+
+function failPostingProgress() {
+    postingProgress.classList.remove("processing");
+
+    postingProgressBar.style.width = "100%";
+
+    setTimeout(() => {
+        postingProgress.classList.remove("active");
+        postingProgressBar.style.width = "0%";
+    }, 500);
+}   
 
 // Cloudinary settings
 const CLOUDINARY_CLOUD_NAME = "gxy7cvmb";
@@ -220,12 +273,16 @@ function handleVideo(file, input) {
             console.log("Size:", file.size);
             console.log("Type:", file.type);
 
+                // START TOP PROGRESS BAR
+                startPostingProgress();
+
             await uploadToCloudinary(file);
 
 
         } catch (error) {
 
             console.error("UPLOAD ERROR:", error);
+             failPostingProgress();
 
             alert("upload failed: " + "\n\n" + error.message);
 
@@ -257,9 +314,12 @@ async function uploadToCloudinary(file) {
         "happstat_explore"
     );
 
-    try {
+   return new Promise((resolve, reject) => {
 
-        const response = await fetch(
+        const xhr = new XMLHttpRequest();
+
+        xhr.open(
+            "POST",
             `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/video/upload`,
             {
                 method: "POST",
@@ -267,48 +327,81 @@ async function uploadToCloudinary(file) {
             }
         );
 
-        const text = await response.text();
 
-        console.log(
-            "Cloudinary HTTP status:",
-            response.status
+         // ===============================
+        // REAL CLOUDINARY UPLOAD PROGRESS
+        // ===============================
+
+        xhr.upload.addEventListener(
+            "progress",
+            function (event) {
+
+                if (!event.lengthComputable) {
+                    return;
+                }
+
+                const percent = Math.round(
+                    (event.loaded / event.total) * 100
+                );
+
+                console.log(
+                    "Upload progress:",
+                    percent + "%"
+                );
+
+                updatePostingProgress(percent);
+            }
         );
 
-        console.log(
-            "Cloudinary response:",
-            text
-        );
 
-        if (!response.ok) {
+        xhr.onload = async function () {
+            try {
+                const text = xhr.responseText;
 
-            throw new Error(
-                `Cloudinary error ${response.status}: ${text}`
-            );
+                console.log(
+                    "Cloudinary HTTP status:",
+                    xhr.status
+                );
 
-        }
+                console.log(
+                    "Cloudinary response:",
+                    text
+                );
 
-        const result = JSON.parse(text);
+                if (xhr.status < 200 || xhr.status >= 300) {
+                    throw new Error(
+                        `Cloudinary error ${xhr.status}: ${text}`
+                    );
+                }
 
-        console.log(
-            "Cloudinary upload successful:",
-            result
-        );
+                const result = JSON.parse(text);
 
-        await saveExplorePost(result);
+                console.log(
+                    "Cloudinary upload successful:",
+                    result
+                );
 
-    } catch (error) {
+                await saveExplorePost(result);
+                resolve(result);
 
-        console.error("CLOUDINARY ERROR:", error);
+            } catch (error) {
+                console.error("CLOUDINARY ERROR:", error);
+                reject(error);
+                alert("Cloudinary upload failed: " + "\n\n" + error.message);
+            }
+        };
 
-        alert("Cloudinary upload failed: " + "\n\n" + error.message);
+        xhr.onerror = function () {
+            reject(new Error("Network error during Cloudinary upload."));
+        };
 
-    }
-
+        xhr.send(formData);
+    });
 }
 
-// ===============================
-// SAVE POST TO FLASK
-// ===============================
+        // ===============================
+        // SAVE POST TO FLASK
+        // ===============================
 
 async function saveExplorePost(result) {
 
@@ -358,12 +451,16 @@ async function saveExplorePost(result) {
 
         }
 
-
         console.log("Video saved successfully.");
 
+        finishPostingProgress();
 
-        window.location.href =
-            "{{ url_for('explore') }}";
+        setTimeout(() => {
+
+            window.location.href =
+                "{{ url_for('explore') }}";
+
+        }, 350);
 
     } catch (error) {
 
@@ -438,4 +535,4 @@ document.addEventListener(
 </script>
 <script src="{{ url_for('static', filename='js/theme.js') }}"></script>
 </body>
-</html>
+

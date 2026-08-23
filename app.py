@@ -822,10 +822,13 @@ def explore():
         ExplorePost.created_at.desc()
     ).all()
 
+    my_uploads = video_posts
+
     return render_template(
         'explore.html',
         posts=posts,
         video_posts=video_posts,
+        my_uploads=my_uploads,
         logged_in_user_id=logged_in_user_id
     )
 
@@ -885,11 +888,18 @@ def explore_post_view(post_id):
         ).all()
     else:
         # Explore page
-        posts = ExplorePost.query.order_by(
+        posts = ExplorePost.query.filter_by(
+            user_id=current_post.user_id,
+            status="ready"
+        ).order_by(
             ExplorePost.created_at.desc()
         ).all()
-   
-   
+
+    my_uploads = ExplorePost.query.filter_by(
+        status="ready"
+    ).order_by(
+        ExplorePost.created_at.desc()
+    ).all()
 
     return render_template(
         "explore post view.html",
