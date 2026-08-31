@@ -20,6 +20,11 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     <link rel="stylesheet" href="{{ url_for('static', filename='css/emoji gallery.css') }}">
 </head>
 <body>
+      <div id="postingProgress" class="posting-progress">
+        <div id="postingProgressBar"
+             class="posting-progress-bar"></div>
+    </div>
+
 <!-- Google Tag Manager (noscript) -->
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KQWKWFQQ"
 height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
@@ -146,6 +151,54 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 const uploadMenu = document.getElementById("uploadMenu");
 const mediaInput = document.getElementById("mediaInput");
 const form = document.getElementById("uploadForm");
+const postingProgress = document.getElementById("postingProgress");
+const postingProgressBar = document.getElementById("postingProgressBar");
+
+// ===============================
+// POSTING INDICATOR
+// ===============================
+
+function startPostingProgress() {
+
+    postingProgress.classList.add("active");
+    postingProgress.classList.remove("processing");
+
+    postingProgressBar.style.width = "5%";
+}
+
+
+function startProcessingProgress() {
+
+    postingProgress.classList.add("active");
+    postingProgress.classList.add("processing");
+
+    postingProgressBar.style.width = "90%";
+}
+
+
+function finishPostingProgress() {
+
+    postingProgress.classList.remove("processing");
+
+    postingProgressBar.style.width = "100%";
+
+    setTimeout(function () {
+
+        postingProgress.classList.remove("active");
+        postingProgressBar.style.width = "0%";
+
+    }, 300);
+}
+
+
+function failPostingProgress() {
+
+    postingProgress.classList.remove("processing");
+
+    postingProgressBar.style.width = "0%";
+
+    postingProgress.classList.remove("active");
+}
 
 function toggleUploadMenu() {
     uploadMenu.classList.toggle("show");
@@ -197,7 +250,7 @@ function handleFile(file) {
 
             URL.revokeObjectURL(video.src);
 
-            if (video.duration > 60) {
+            if (video.duration > 30) {
                 alert("Video must be 1 minute or less.");
                 mediaInput.value = "";
                 return;

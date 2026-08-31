@@ -71,7 +71,7 @@ body {
 }
 
 .gallery-item {
-    aspect-ratio: 1 / 1;
+    aspect-ratio: 6 / 19;
     overflow: hidden;
     background: var(--input-bg);
 }
@@ -206,4 +206,52 @@ body {
 
     font-size: 23px;
 
+}
+
+
+
+/* Twitter/X-style posting progress bar */
+.posting-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    z-index: 99999;
+    background: transparent;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.posting-progress.active {
+    opacity: 1;
+}
+
+.posting-progress-bar {
+    width: 0%;
+    height: 100%;
+    background: #1d9bf0;
+    transition: width 0.25s ease;
+    box-shadow: 0 0 6px rgba(29, 155, 240, 0.5);
+}
+
+/* Processing animation */
+.posting-progress.processing .posting-progress-bar {
+    width: 85%;
+    animation: postingPulse 1.4s ease-in-out infinite;
+}
+
+@keyframes postingPulse {
+    0% {
+        opacity: 0.5;
+    }
+
+    50% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0.5;
+    }
 }
