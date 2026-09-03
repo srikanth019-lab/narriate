@@ -34,11 +34,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <header class="top-bar">
     <header class="top-bar">
 
-{% if session.get("user_id") == user.id %}
-<a href="{{ url_for('explore') }}" class="explore-link">
-    explore
-</a>
-{% endif %}
+
 
 </header>
     {% if current_user_id == user.id %}
@@ -187,4 +183,15 @@ gtag('event', 'sign_up', {
 
 <script src="{{ url_for('static', filename='js/theme.js') }}"></script>
 </body>
+<nav class="bottom-nav">
+    <a href="{{ url_for('explore') }}" class="nav-item active">
+        <span class="nav-icon">⌂</span>
+        <span>Home</span>
+    </a>
+
+    <a href="{{ url_for('profile') }}" class="nav-item active">
+        <span class="nav-icon"> 👤</span>
+        <span>Profile</span>
+    </a>
+</nav>
 </html>     
