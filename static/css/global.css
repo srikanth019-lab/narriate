@@ -6,7 +6,13 @@
     --muted: #666666;
     --input-bg: #f5f5f5;
     --input-border: #dddddd;
+
+
+       /* Light mode header */
+    --topbar-bg: #4a7b9f;
+    --topbar-border: #0f2a45;
 }
+
 
 [data-theme="dark"] {
     --bg: #050505;
@@ -16,7 +22,12 @@
     --muted: #aaaaaa;
     --input-bg: #1b1b22;
     --input-border: #33333d;
+
+         /* Dark mode header */
+          --topbar-bg: #15151b;
+    --topbar-border: #292932;
 }
+
 
 body {
     background: var(--bg);
