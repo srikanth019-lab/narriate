@@ -155,7 +155,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
            <a href="{{ url_for('updates_post_view', post_id=post.id, source='videos') }}"
               class="videos-item">
-
+            {% if post.media_type == "video" %}
               <video
                 class=" updates-video"
                 muted
@@ -165,7 +165,15 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 <source src="{{ post.media_url }}" type="video/mp4">
 
                </video>
+        {% elif post.media_type == "image" %}
 
+    <img
+        src="{{ post.media_url }}"
+        class="updates-video"
+        alt="Happ"
+    >
+
+        {% endif %}
             </a>
 
         </div> 
