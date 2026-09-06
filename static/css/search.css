@@ -29,7 +29,7 @@ body{
 .back-btn {
     background: none;
     border: none;
-    color: white;
+    color: var(--text);
     font-size: 28px;
     cursor: pointer;
     padding: 0;
