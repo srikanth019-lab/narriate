@@ -2,7 +2,6 @@
 # 1️⃣ IMPORTS
 # =======================
 from flask import abort
-from ast import If
 from typing import Any
 from datetime import datetime, timedelta
 from flask import request
@@ -21,7 +20,6 @@ import os
 
 # Security (password hashing)
 
-from requests import post
 from werkzeug.datastructures.file_storage import FileStorage
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -30,6 +28,9 @@ from flask_migrate import Migrate
 from flask import request, redirect, url_for
 
 from datetime import datetime
+
+from datetime import datetime, timedelta, timezone
+from zoneinfo import ZoneInfo
 
 
 
@@ -1022,6 +1023,19 @@ def create_updates_post():
         "success": True,
         "post_id": new_post.id
     })
+
+
+@app.template_filter("ist")
+def ist_time(dt):
+    if dt is None:
+        return ""
+
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=timezone.utc)
+
+    return dt.astimezone(
+        ZoneInfo("Asia/Kolkata")
+    ).strftime("%H:%M")
 
 
 
