@@ -43,8 +43,8 @@ body {
     position: sticky;
     top: 0;
 
-    background: var(--bg);
-    color: var(--text);
+    background: transparent;
+    color: var(--header-text);
 
     z-index: 50;
 }
@@ -81,6 +81,15 @@ body {
 .add-btn:active {
     transform: scale(0.94);
 }
+
+
+.top-bar {
+    width: 100%;
+    background: var(--topbar-bg);
+    color: #fff;
+    box-sizing: border-box;
+}
+
 
 /* =========================
    My Status
