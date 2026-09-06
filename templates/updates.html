@@ -57,40 +57,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         id="uploadForm"
     >
 
-        <input
-            type="file"
-            id="cameraInput"
-            name="video"
-            hidden
-            accept="video/*"
-            capture="environment"
-    >
-           
-     <!-- Photos: select video from gallery -->
-    <input
-        type="file"
-        id="photosInput"
-        name="video"
-        hidden
-        accept="video/*"
-    >
-
-
-        <button
-            type="button"
-            class="add-btn"
-            onclick="toggleUploadMenu()"
-        >
-            ＋
-        </button>
-
-    </form>
-    {% endif %}
+     
 
   
 
   <section class="status-section">
-    <h2 class="section-title">Status</h2>
+    <h2 class="section-title">Happs</h2>
 
     {% if active_my_status %}
 
@@ -102,7 +74,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             {{ active_my_status.emoji.emoji }}
         </div>
 
-        <div class="status-name">My status</div>
+        <div class="status-name">My Happs</div>
 
         <div class="status-time">
             {{ active_my_status.created_at.strftime('%H:%M') }}
@@ -126,9 +98,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             </div>
         {% endif %}
 
-        <div class="status-name">My status</div>
+        <div class="happs-name">My Happs</div>
 
-        <div class="status-time">
+        <div class="happs-time">
             Add an update
         </div>
 
@@ -197,6 +169,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <span>Profile</span>
     </a>
 </nav>
+
+{%endif%}
 
 </div> 
     <script>
