@@ -28,15 +28,17 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- End Google Tag Manager (noscript) -->
 
-<header class="top-header">
+<header class="top-bar">
+
+ <div class="profile-title">
+    {% if current_user_id != user.id %}
+        <button class="back-btn" onclick="history.back()">←</button>
+    {% endif %}
+
+
 <div class="logo">Profile</div>
 
-<header class="top-bar">
-    <header class="top-bar">
-
-
-
-</header>
+<div>
     {% if current_user_id == user.id %}
         <button class="search-btn" onclick="location.href='/search'">
             ⌕
@@ -182,7 +184,7 @@ gtag('event', 'sign_up', {
 {% endif %}
 
 <script src="{{ url_for('static', filename='js/theme.js') }}"></script>
-</body>
+{% if current_user_id == user.id %}
 <nav class="bottom-nav">
     <a href="{{ url_for('updates') }}" class="nav-item active">
         <span class="nav-icon">⌂</span>
@@ -194,4 +196,6 @@ gtag('event', 'sign_up', {
         <span>Profile</span>
     </a>
 </nav>
+{% endif %}
+</body>
 </html>     

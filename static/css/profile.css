@@ -59,24 +59,22 @@ body{
 
     }
 
+
+
+
+
 .logo {
     position: absolute;
     top: 20px;
     left: 20px;
-
     font-size: 30px;
     font-weight: 800;
     font-family: Arial, sans-serif;
     color: #ffffff;
-
     letter-spacing: 1px;
-    
     user-select: none;
-
     z-index: 1000;
 }
-
-
 
 /* Profile */
 .profile-content{
@@ -446,4 +444,25 @@ body{
 
 .nav-item.active {
     color: var(--text);
+}
+
+
+
+.back-btn {
+    position: absolute;
+    top: 20px;
+    left: 0;
+
+    background: transparent;
+    border: none;
+    color: #ffffff;
+
+    font-size: 18px;
+    line-height: 1;
+
+    padding: 0;
+    margin: 0;
+
+    cursor: pointer;
+    z-index: 1001;
 }
