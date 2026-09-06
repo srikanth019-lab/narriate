@@ -10,14 +10,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <!-- End Google Tag Manager -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Happstat - explore</title>
+    <title>Happstat - Updates</title>
 
     <head>
     <link rel="stylesheet"
           href="{{ url_for('static', filename='css/global.css') }}">
 
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/explore.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/updates.css') }}">
 
  <!-- FFmpeg WebAssembly -->
     <script src="https://unpkg.com/@ffmpeg/ffmpeg@0.12.10/dist/umd/ffmpeg.js"></script>
@@ -45,13 +45,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
   
 
-    <div class="explore-title">
-        Explore
+    <div class="updates-title">
+        Happstat
     </div>
 
     {% if logged_in_user_id %}
     <form
-        action="{{ url_for('explore_upload') }}"
+        action="{{ url_for('create_updates_post') }}"
         method="POST"
         enctype="multipart/form-data"
         id="uploadForm"
@@ -89,31 +89,88 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
   
 
-    <!-- Gallery -->
+  <section class="status-section">
+    <h2 class="section-title">Status</h2>
 
-    <div class="explore-grid">
+    {% if active_my_status %}
 
- 
+    <!-- User already has an active status -->
+    <a href="{{ url_for('updates_post_view', post_id=active_my_status.id, source='updates') }}"
+       class="my-status-card">
 
-    {% for post in video_posts %}
+        <div class="status-emoji-circle">
+            {{ active_my_status.emoji.emoji }}
+        </div>
 
-    <a href="{{ url_for('explore_post_view', post_id=post.id,source='explore') }}"
-       class="explore-item">
+        <div class="status-name">My status</div>
 
-        <video
-            class="explore-video"
-            muted
-            playsinline
-            preload="metadata"
-        >
-            <source src="{{post.video_url }}" type="video/mp4">
-        </video>
+        <div class="status-time">
+            {{ active_my_status.created_at.strftime('%H:%M') }}
+        </div>
 
     </a>
 
-    {% endfor %}
+    {% else %}
 
-</div>
+    <!-- User has no active status -->
+    <a href="{{ url_for('update_emoji') }}"
+       class="my-status-card">
+
+        {% if current_user.profile_photo %}
+            <img src="{{ current_user.profile_photo }}"
+                 alt="My profile photo"
+                 class="status-profile-photo">
+        {% else %}
+            <div class="status-profile-photo status-profile-placeholder">
+                👤
+            </div>
+        {% endif %}
+
+        <div class="status-name">My status</div>
+
+        <div class="status-time">
+            Add an update
+        </div>
+
+    </a>
+
+    {% endif %}
+</section>
+
+<!-- =========================
+     RECENT UPDATES
+========================= -->
+
+<section class="recent-updates-section">
+
+    <h2 class="section-title">Recent updates</h2>
+
+    <div class="recent-updates-grid">
+
+        {% for post in video_posts %}
+
+        <a href="{{ url_for('updates_post_view', post_id=post.id, source='updates') }}"
+           class="recent-update-item">
+
+            <div class="update-emoji-circle">
+            {{ post.emoji.emoji }}
+            </div>
+
+            <div class="update-username">
+                {{ post.user.username }}
+            </div>
+
+            <div class="update-time">
+                {{ post.created_at.strftime('%H:%M') }}
+            </div>
+
+        </a>
+
+        {% endfor %}
+
+    </div>
+
+</section>
 <!-- Upload menu -->
 <div id="uploadMenu" class="upload-menu">
 
@@ -130,7 +187,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 </div>
    
    <nav class="bottom-nav">
-    <a href="{{ url_for('explore') }}" class="nav-item active">
+    <a href="{{ url_for('updates') }}" class="nav-item active">
         <span class="nav-icon">⌂</span>
         <span>Home</span>
     </a>
@@ -202,7 +259,7 @@ function failPostingProgress() {
 
 // Cloudinary settings
 const CLOUDINARY_CLOUD_NAME = "gxy7cvmb";
-const CLOUDINARY_UPLOAD_PRESET = "happstat_explore";
+const CLOUDINARY_UPLOAD_PRESET = "happstat_updates";
 
 
 
@@ -320,7 +377,7 @@ async function uploadToCloudinary(file) {
     formData.append("file", file);
     formData.append(
         "upload_preset",
-        "happstat_explore"
+        "happstat_updates"
     );
 
    return new Promise((resolve, reject) => {
@@ -390,7 +447,7 @@ async function uploadToCloudinary(file) {
                     result
                 );
 
-                await saveExplorePost(result);
+                await saveUpdatesPost(result);
                 resolve(result);
 
             } catch (error) {
@@ -412,12 +469,12 @@ async function uploadToCloudinary(file) {
         // SAVE POST TO FLASK
         // ===============================
 
-async function saveExplorePost(result) {
+async function saveUpdatesPost(result) {
 
     try {
 
         const response = await fetch(
-            "{{ url_for('explore_upload') }}",
+            "{{ url_for('create_updates_post') }}",
             {
                 method: "POST",
 
@@ -467,7 +524,7 @@ async function saveExplorePost(result) {
         setTimeout(() => {
 
             window.location.href =
-                "{{ url_for('explore') }}";
+                "{{ url_for('updates') }}";
 
         }, 350);
 

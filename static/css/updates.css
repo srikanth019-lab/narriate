@@ -1,5 +1,5 @@
 /* =========================
-   Explore Page
+   Updates Page
 ========================= */
 
 body {
@@ -30,9 +30,9 @@ body {
     z-index: 100;
 }
 
-/* Explore title */
+/* Updates title */
 
-.explore-title {
+.updates-title {
     text-align: center;
 
     font-size: 22px;
@@ -87,37 +87,201 @@ body {
 }
 
 /* =========================
-   Video Gallery
+   My Status
 ========================= */
 
-.explore-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
+.status-section {
     width: 100%;
+    padding: 0 16px;
+    box-sizing: border-box;
 }
 
-.explore-item {
-    position: relative;
-    width: 100%;
-    aspect-ratio: 1 / 1;
-    overflow: hidden;
+.section-title {
+    margin: 18px 0 14px;
+
+    font-size: 18px;
+    font-weight: 600;
+
+    color: var(--text);
+}
+
+.my-status-card {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+
+    width: 90px;
+
+    text-decoration: none;
+    color: var(--text);
+}
+
+
+.status-profile-photo {
+    width: 72px;
+    height: 72px;
+
     border-radius: 50%;
-    background: #000;
-}
 
-.explore-video {
-    width: 100%;
-    height: 100%;
     object-fit: cover;
     display: block;
+
+    border: 1px solid var(--border);
+}
+
+.status-profile-placeholder {
+    width: 72px;
+    height: 72px;
+
+    border-radius: 50%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: var(--card);
+    border: 1px solid var(--border);
+
+    font-size: 32px;
+}
+
+
+.status-emoji-circle {
+    width: 72px;
+    height: 72px;
+
+    border-radius: 50%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: var(--card);
+    border: 1px solid var(--border);
+
+    font-size: 32px;
+}
+
+.status-name {
+    margin-top: 7px;
+
+    font-size: 14px;
+    font-weight: 500;
+
+    white-space: nowrap;
+}
+
+.status-time {
+    margin-top: 3px;
+
+    font-size: 11px;
+    color: var(--muted);
+}
+
+
+/* =========================
+   Recent Updates
+========================= */
+
+.recent-updates-section {
+    width: 100%;
+    padding: 0 16px 80px;
+
+    box-sizing: border-box;
+}
+
+.recent-updates-grid {
+    display: grid;
+
+    grid-template-columns: repeat(3, 1fr);
+
+    column-gap: 12px;
+    row-gap: 22px;
+
+    width: 100%;
+}
+
+.recent-update-item {
+    display: flex;
+    flex-direction: column;
+
+    align-items: center;
+
+    min-width: 0;
+
+    text-decoration: none;
+    color: var(--text);
+}
+
+.update-emoji-circle {
+    width: 76px;
+    height: 76px;
+
+    border-radius: 50%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: var(--card);
+    border: 1px solid var(--border);
+
+    font-size: 36px;
+}
+
+.update-username {
+    margin-top: 7px;
+
+    max-width: 100%;
+
+    font-size: 14px;
+    font-weight: 500;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.update-time {
+    margin-top: 3px;
+
+    font-size: 11px;
+    color: var(--muted);
+}
+
+
+/* =========================
+   Mobile
+========================= */
+
+@media (max-width: 600px) {
+
+    .section-title {
+        font-size: 18px;
+    }
+
+    .status-emoji-circle {
+        width: 70px;
+        height: 70px;
+    }
+
+    .update-emoji-circle {
+        width: 70px;
+        height: 70px;
+
+        font-size: 34px;
+    }
+
+    .recent-updates-grid {
+        column-gap: 8px;
+    }
 }
 /* Mobile */
 
 @media (max-width: 600px) {
 
    
-    .explore-title {
+    .updates-title {
         font-size: 20px;
     }
 

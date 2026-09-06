@@ -1,0 +1,294 @@
+* {
+    box-sizing: border-box;
+}
+
+
+body {
+    margin: 0;
+
+    background: var(--bg, #000);
+    color: var(--text, #fff);
+
+    font-family: Arial, sans-serif;
+}
+
+
+/* =========================
+   Header
+========================= */
+
+.header {
+    height: 60px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    position: sticky;
+    top: 0;
+
+    background: var(--bg, #000);
+
+    border-bottom: 1px solid var(--border, #292929);
+
+    z-index: 100;
+}
+
+
+.back-btn {
+    position: absolute;
+    left: 18px;
+
+    text-decoration: none;
+
+    color: var(--text, #fff);
+
+    font-size: 30px;
+    line-height: 1;
+}
+
+
+.title {
+    font-size: 20px;
+    font-weight: 600;
+}
+
+
+/* =========================
+   Content
+========================= */
+
+.content {
+    padding: 24px 16px 110px;
+}
+
+
+.heading {
+    font-size: 22px;
+    font-weight: 600;
+
+    margin-bottom: 24px;
+
+    text-align: center;
+}
+
+
+/* =========================
+   Emoji Grid
+========================= */
+
+.emoji-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(6, minmax(0, 1fr));
+
+    column-gap: 8px;
+    row-gap: 12px;
+
+    width: 100%;
+    max-width: 700px;
+
+    margin: 0 auto;
+}
+
+
+.emoji-btn {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+
+    border: none;
+    border-radius: 14px;
+
+    background: transparent;
+
+    color: inherit;
+
+    font-size: 36px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.12s ease,
+        background 0.12s ease;
+}
+
+
+.emoji-btn:hover {
+    background: var(--card, #1d1d1d);
+}
+
+
+.emoji-btn:active {
+    transform: scale(0.88);
+}
+
+
+.emoji-btn.selected {
+    background: var(--card, #202020);
+
+    box-shadow:
+        0 0 0 3px #6c4dff;
+
+    transform: scale(1.05);
+}
+
+
+/* =========================
+   Continue
+========================= */
+
+.continue-container {
+    position: fixed;
+
+    left: 0;
+    bottom: 0;
+
+    width: 100%;
+
+    padding: 12px 16px;
+
+    background: var(--bg, #000);
+
+    border-top:
+        1px solid var(--border, #292929);
+
+    z-index: 200;
+}
+
+
+.continue-btn {
+    display: block;
+
+    width: 100%;
+    max-width: 700px;
+
+    margin: 0 auto;
+
+    padding: 14px;
+
+    border: none;
+    border-radius: 14px;
+
+    background: #6c4dff;
+
+    color: white;
+
+    font-size: 17px;
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+
+.continue-btn:disabled {
+    opacity: 0.45;
+
+    cursor: not-allowed;
+}
+
+
+/* =========================
+   Mobile
+========================= */
+
+@media (max-width: 600px) {
+
+    .emoji-grid {
+        grid-template-columns:
+            repeat(6, minmax(0, 1fr));
+
+        column-gap: 4px;
+        row-gap: 8px;
+    }
+
+
+    .emoji-btn {
+        font-size: 30px;
+    }
+
+
+    .heading {
+        font-size: 20px;
+    }
+
+}
+
+
+
+
+/* Status media menu */
+
+.media-menu {
+    position: fixed;
+    inset: 0;
+    display: none;
+    z-index: 1000;
+}
+
+.media-menu.show {
+    display: block;
+}
+
+.media-menu-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+}
+
+.media-menu-card {
+    position: absolute;
+    left: 12px;
+    right: 12px;
+    bottom: 12px;
+    background: var(--card, #1d1d1d);
+    border-radius: 18px;
+    overflow: hidden;
+    padding: 8px;
+}
+
+.media-menu-title {
+    text-align: center;
+    font-size: 17px;
+    font-weight: 600;
+    padding: 14px 10px;
+    color: var(--text, #fff);
+}
+
+.media-option,
+.media-cancel {
+    width: 100%;
+    border: none;
+    background: transparent;
+    color: var(--text, #fff);
+    font-size: 16px;
+    text-align: left;
+    padding: 16px;
+    border-radius: 12px;
+    cursor: pointer;
+}
+
+.media-option:hover {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.media-option {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.media-option span {
+    font-weight: 500;
+}
+
+.media-cancel {
+    text-align: center;
+    margin-top: 4px;
+    color: #ff5555;
+    font-weight: 600;
+}

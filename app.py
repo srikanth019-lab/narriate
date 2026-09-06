@@ -172,8 +172,8 @@ class Follow(db.Model):
 
 
 
-class ExplorePost(db.Model):
-    __tablename__ = 'explore_post'
+class updatesPost(db.Model):
+    __tablename__ = 'updates_post'
 
     id = db.Column(db.Integer, primary_key=True)
 
@@ -183,8 +183,20 @@ class ExplorePost(db.Model):
         nullable=False
     )
 
-    video_url = db.Column(
+    emoji_id = db.Column(
+        db.Integer,
+        db.ForeignKey('emoji.id'),
+        nullable=False
+    )
+
+
+    media_url = db.Column(
         db.String(500),
+        nullable=False
+    )
+
+    media_type = db.Column(
+        db.String(10),
         nullable=False
     )
 
@@ -205,14 +217,37 @@ class ExplorePost(db.Model):
         nullable=False
     )
 
+    
+    
+
+      # Status is visible for 24 hours
+    status_expires_at = db.Column(
+        db.DateTime,
+        nullable=False
+    )
+
+    # Video remains in Videos for 7 days
+    video_expires_at = db.Column(
+        db.DateTime,
+        nullable=False
+    )
+
     user = db.relationship(
         'User',
         backref=db.backref(
-            'explore_posts',
+            'updates_posts',
             lazy=True
         )
     )
 
+
+    emoji = db.relationship(
+        'Emoji',
+        backref=db.backref(
+            'updates_posts',
+            lazy=True
+        )
+    )
 
 
 
@@ -357,12 +392,13 @@ def profile():
         flash("User not found.")
         return redirect(url_for("login"))
 
-    explore_posts = ExplorePost.query.filter_by(
-        user_id=user.id
-    ).order_by(
-        ExplorePost.created_at.desc()
-    ).all()
-
+    updates_posts = updatesPost.query.filter(
+    updatesPost.user_id == user.id,
+    updatesPost.status == "ready",
+    updatesPost.video_expires_at > datetime.utcnow()
+).order_by(
+    updatesPost.created_at.desc()
+).all()
     emoji_counts = (
         db.session.query(
             Emoji.id,
@@ -397,11 +433,12 @@ def profile():
         user=user,
         current_user_id=user_id,
         emoji_counts=emoji_counts,
-        explore_posts=explore_posts,
+        updates_posts=updates_posts,
         followers_count=followers_count,
         following_count=following_count,
         is_following=is_following,
-        signup_success=signup_success
+        signup_success=signup_success,
+       
     )
 
 
@@ -518,11 +555,11 @@ def view_profile(username):
     )
 
 
-    # Explore videos
+    # updates videos
     video_posts = (
-        ExplorePost.query
+        updatesPost.query
         .filter_by(user_id=profile_user.id)
-        .order_by(ExplorePost.created_at.desc())
+        .order_by(updatesPost.created_at.desc())
         .all()
     )
 
@@ -550,7 +587,7 @@ def view_profile(username):
         followers_count=followers_count,
         following_count=following_count,
         emoji_counts=emoji_counts,
-        explore_posts=video_posts
+        updates_posts=video_posts
     )
 
 @app.route("/logout")
@@ -808,101 +845,85 @@ def follow_status(user_id):
 
 
 
-@app.route('/explore')
-def explore():
+@app.route('/updates')
+def updates():
     logged_in_user_id = session.get("user_id")
 
-    posts = EmojiPost.query.order_by(
-        EmojiPost.created_at.desc()
-    ).all()
+    current_user = None
+    active_my_status = None
 
-    video_posts = ExplorePost.query.filter_by(
-        status='ready'
-    ).order_by(
-        ExplorePost.created_at.desc()
-    ).all()
+    if logged_in_user_id:
+        current_user = User.query.get(logged_in_user_id)
+
+        active_my_status = updatesPost.query.filter(
+            updatesPost.user_id == logged_in_user_id,
+            updatesPost.status == "ready",
+            updatesPost.status_expires_at > datetime.utcnow()
+        ).order_by(
+            updatesPost.created_at.desc()
+        ).first()
+
+    video_posts = []
+
+    if logged_in_user_id:
+        following_ids = db.session.query(
+            Follow.following_id
+        ).filter(
+            Follow.follower_id == logged_in_user_id
+        ).subquery()
+
+        video_posts = updatesPost.query.filter(
+            updatesPost.status == "ready",
+            updatesPost.status_expires_at > datetime.utcnow(),
+            updatesPost.user_id.in_(following_ids)
+        ).order_by(
+            updatesPost.created_at.desc()
+        ).all()
 
     my_uploads = video_posts
 
     return render_template(
-        'explore.html',
-        posts=posts,
+        "updates.html",
         video_posts=video_posts,
-        my_uploads=my_uploads,
-        logged_in_user_id=logged_in_user_id
+        logged_in_user_id=logged_in_user_id,
+        current_user=current_user,
+        active_my_status=active_my_status
     )
 
 
-def new_func():
-    posts = EmojiPost.query.order_by(
-        EmojiPost.created_at.desc()
-    ).all()
-    return posts
+@app.route("/updates/post/<int:post_id>")
+def updates_post_view(post_id):
 
+    current_post = updatesPost.query.get_or_404(post_id)
 
-@app.route('/explore/upload', methods=['POST'])
-def explore_upload():
-
-    if 'user_id' not in session:
-        return jsonify({"error": "Not logged in"}), 401
-
-    data = request.get_json()
-
-    video_url = data.get("video_url")
-    cloudinary_public_id = data.get("cloudinary_public_id")
-
-    if not video_url or not cloudinary_public_id:
-        return jsonify({"error": "Missing Cloudinary data"}), 400
-
-    post = ExplorePost(
-        user_id=session["user_id"],
-        video_url=video_url,
-        cloudinary_public_id=cloudinary_public_id,
-        status="ready"
-    )
-
-    db.session.add(post)
-    db.session.commit()
-
-    return jsonify({
-        "success": True,
-        "post_id": post.id
-    })
-
-
-
-
-@app.route("/explore/post/<int:post_id>")
-def explore_post_view(post_id):
-
-    current_post = ExplorePost.query.get_or_404(post_id)
-
-    source = request.args.get("source", "explore")
+    source = request.args.get("source", "updates")
 
     if source == "videos":
-        # Profile Videos → only that creator's videos
-        posts = ExplorePost.query.filter_by(
-            user_id=current_post.user_id
+        posts = updatesPost.query.filter(
+            updatesPost.user_id == current_post.user_id,
+            updatesPost.status == "ready",
+            updatesPost.video_expires_at > datetime.utcnow()
         ).order_by(
-            ExplorePost.created_at.desc()
+            updatesPost.created_at.desc()
         ).all()
     else:
-        # Explore page
-        posts = ExplorePost.query.filter_by(
-            user_id=current_post.user_id,
-            status="ready"
+        # Updates page
+        posts = updatesPost.query.filter(
+            updatesPost.user_id == current_post.user_id,
+            updatesPost.status == "ready",
+            updatesPost.status_expires_at > datetime.utcnow()
         ).order_by(
-            ExplorePost.created_at.desc()
+            updatesPost.created_at.desc()
         ).all()
-
-    my_uploads = ExplorePost.query.filter_by(
-        status="ready"
+    my_uploads = updatesPost.query.filter(
+        updatesPost.status == "ready",
+        updatesPost.video_expires_at > datetime.utcnow()
     ).order_by(
-        ExplorePost.created_at.desc()
+        updatesPost.created_at.desc()
     ).all()
 
     return render_template(
-        "explore post view.html",
+        "updates post view.html",
         posts=posts,
         current_post=current_post,
         current_user_id=session.get("user_id"),
@@ -911,8 +932,8 @@ def explore_post_view(post_id):
 
 
 
-@app.route("/delete-explore-post/<int:post_id>", methods=["POST"])
-def delete_explore_post(post_id):
+@app.route("/delete-updates-post/<int:post_id>", methods=["POST"])
+def delete_updates_post(post_id):
 
    
 
@@ -922,7 +943,7 @@ def delete_explore_post(post_id):
             "message": "Please login."
         }), 401
 
-    post = ExplorePost.query.get_or_404(post_id)
+    post = updatesPost.query.get_or_404(post_id)
     
     # ONLY THE CREATOR CAN DELETE
     if post.user_id != session["user_id"]:
@@ -939,6 +960,68 @@ def delete_explore_post(post_id):
     })
 
 
+
+@app.route('/update-emoji')
+def update_emoji():
+    user_id = session.get("user_id")
+    if not user_id:
+        return redirect(url_for("login"))
+
+    emojis = Emoji.query.order_by(Emoji.id.asc()).all()
+    return render_template("update emoji.html", emojis=emojis)
+
+
+
+@app.route("/updates/create", methods=["POST"])
+def create_updates_post():
+    if "user_id" not in session:
+        return jsonify({"success": False, "error": "Not logged in"}), 401
+
+    data = request.get_json()
+
+    emoji_id = data.get("emoji_id")
+    media_url = data.get("media_url")
+    media_type = data.get("media_type")
+    cloudinary_public_id = data.get("cloudinary_public_id")
+
+    if not emoji_id or not media_url or not media_type:
+        return jsonify({
+            "success": False,
+            "error": "Missing required data"
+        }), 400
+
+    if media_type not in ["image", "video"]:
+        return jsonify({
+            "success": False,
+            "error": "Invalid media type"
+        }), 400
+
+    emoji = Emoji.query.get(emoji_id)
+
+    if not emoji:
+        return jsonify({
+            "success": False,
+            "error": "Emoji not found"
+        }), 404
+
+    new_post = updatesPost(
+        user_id=session["user_id"],
+        emoji_id=emoji_id,
+        media_url=media_url,
+        media_type=media_type,
+        cloudinary_public_id=cloudinary_public_id,
+        status="ready",
+       status_expires_at=datetime.utcnow() + timedelta(hours=24),
+       video_expires_at=datetime.utcnow() + timedelta(days=7)
+    )
+
+    db.session.add(new_post)
+    db.session.commit()
+
+    return jsonify({
+        "success": True,
+        "post_id": new_post.id
+    })
 
 
 

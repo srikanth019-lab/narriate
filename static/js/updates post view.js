@@ -147,7 +147,7 @@ function deleteVideo(postId) {
         return;
     }
 
-    fetch(`/delete-explore-post/${postId}`, {
+    fetch(`/delete-updates-post/${postId}`, {
         method: "POST"
     })
     .then(response => {
@@ -183,7 +183,7 @@ function deleteVideo(postId) {
 function sharePost(postId) {
 
     const shareUrl =
-        `${window.location.origin}/explore/post/${postId}`;
+        `${window.location.origin}/updates/post/${postId}`;
 
     if (navigator.share) {
 

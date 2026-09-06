@@ -10,14 +10,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <!-- End Google Tag Manager -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Happstat - Explore Post</title>
+    <title>Happstat - Updates Post</title>
 
     <head>
     <link rel="stylesheet"
           href="{{ url_for('static', filename='css/global.css') }}">
 
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/explore post view.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/updates post view.css') }}">
 </head>
 
 <body>
@@ -167,19 +167,19 @@ function handleSharePlus() {
     if (!loggedIn) {
 
         window.location.href =
-            "{{ url_for('signup') }}?next=explore";
+            "{{ url_for('signup') }}?next=updates";
 
         return;
     }
 
     window.location.href =
-        "{{ url_for('explore') }}";
+        "{{ url_for('updates') }}";
 }
 
 
 </script>
 
-<script src="{{ url_for('static', filename='js/explore post view.js') }}"></script>
+<script src="{{ url_for('static', filename='js/updates post view.js') }}"></script>
 
 <script src="{{ url_for('static', filename='js/theme.js') }}"></script>
 </body>

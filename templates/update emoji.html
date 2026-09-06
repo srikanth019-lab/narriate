@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Choose Emoji - Happstat</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/update emoji.css') }}"
+    >
+
+</head>
+
+
+<body>
+
+    <!-- Header -->
+
+    <header class="header">
+
+        <a
+            href="{{ url_for('updates') }}"
+            class="back-btn"
+        >
+            ‹
+        </a>
+
+        <div class="title">
+            Happstat
+        </div>
+
+    </header>
+
+
+    <!-- Emoji Selection -->
+
+    <main class="content">
+
+        <div class="heading">
+            Choose an emoji
+        </div>
+
+
+        <div class="emoji-grid">
+
+            {% for item in emojis %}
+
+                <button
+                    type="button"
+                    class="emoji-btn"
+                    data-id="{{ item.id }}"
+                    data-emoji="{{ item.emoji }}"
+                    aria-label="{{ item.name }}"
+                >
+                    {{ item.emoji }}
+                </button>
+
+            {% endfor %}
+
+        </div>
+
+    </main>
+
+
+    <!-- Continue -->
+
+    <div class="continue-container">
+
+        <button
+            type="button"
+            id="continueBtn"
+            class="continue-btn"
+            disabled
+        >
+            Continue
+        </button>
+
+    </div>
+
+
+    <!-- Status media menu -->
+<div id="mediaMenu" class="media-menu">
+    <div class="media-menu-overlay" id="mediaMenuOverlay"></div>
+
+    <div class="media-menu-card">
+        <div class="media-menu-title">Update status</div>
+
+        <button type="button" id="cameraBtn" class="media-option">
+            📷 <span>Camera</span>
+        </button>
+
+        <button type="button" id="photosBtn" class="media-option">
+            🖼️ <span>Photos</span>
+        </button>
+
+        <button type="button" id="cancelBtn" class="media-cancel">
+            Cancel
+        </button>
+    </div>
+</div>
+
+<!-- Hidden media inputs -->
+<input
+    type="file"
+    id="cameraInput"
+    accept="image/*,video/*"
+    capture="environment"
+    hidden
+>
+
+<input
+    type="file"
+    id="photosInput"
+    accept="image/*,video/*"
+    hidden
+>
+
+
+    <script
+    <script src="{{ url_for('static', filename='js/update emoji.js') }}"></script>
+    
+
+</body>
+
+</html>
