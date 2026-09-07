@@ -1033,10 +1033,18 @@ def ist_time(dt):
     if dt.tzinfo is None:
         dt = dt.replace(tzinfo=timezone.utc)
 
-    return dt.astimezone(
-        ZoneInfo("Asia/Kolkata")
-    ).strftime("%H:%M")
+    dt = dt.astimezone(ZoneInfo("Asia/Kolkata"))
 
+    hour = dt.hour
+    minute = dt.minute
+
+    period = "AM" if hour < 12 else "PM"
+    hour12 = hour % 12
+
+    if hour12 == 0:
+        hour12 = 12
+
+    return f"{hour12}:{minute:02d} {period}"
 
 
 

@@ -77,7 +77,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <div class="status-name">My Happs</div>
 
         <div class="status-time">
-            {{ active_my_status.created_at.strftime('%I:%M %p') }}
+           {{ active_my_status.created_at|ist }}
         </div>
 
     </a>
@@ -133,7 +133,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             </div>
 
             <div class="update-time">
-               {{ post.created_at.strftime('%I:%M %p') }}
+                {{ post.created_at|ist }}
             </div>
 
         </a>
