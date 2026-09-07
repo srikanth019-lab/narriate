@@ -292,3 +292,116 @@ body {
     color: #ff5555;
     font-weight: 600;
 }
+
+
+
+/* =========================
+   UPLOAD PROGRESS OVERLAY
+========================= */
+
+.upload-progress {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    background: rgba(255, 255, 255, 0.92);
+}
+
+.upload-progress.show {
+    display: flex;
+}
+
+
+/* =========================
+   CIRCULAR PROGRESS RING
+========================= */
+
+.upload-progress-ring {
+    position: relative;
+    width: 72px;
+    height: 72px;
+}
+
+.upload-progress-ring svg {
+    width: 72px;
+    height: 72px;
+
+    transform: rotate(-90deg);
+}
+
+
+/* Background circle */
+
+.progress-bg {
+    fill: none;
+    stroke: #e5e7eb;
+    stroke-width: 7;
+}
+
+
+/* Actual progress */
+
+.progress-circle {
+    fill: none;
+    stroke: #2563eb;
+    stroke-width: 7;
+
+    stroke-linecap: round;
+
+    stroke-dasharray: 263.9;
+    stroke-dashoffset: 263.9;
+
+    transition: stroke-dashoffset 0.15s linear;
+}
+
+
+/* =========================
+   CHECK MARK
+========================= */
+
+.progress-check {
+    position: absolute;
+    inset: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 30px;
+    font-weight: 600;
+
+    color: #2563eb;
+
+    opacity: 0;
+    transform: scale(0.7);
+
+    transition:
+        opacity 0.2s ease,
+        transform 0.2s ease;
+}
+
+.progress-check.show {
+    opacity: 1;
+    transform: scale(1);
+}
+
+
+/* =========================
+   STATUS TEXT
+========================= */
+
+.upload-status {
+    margin-top: 14px;
+
+    font-size: 15px;
+    font-weight: 500;
+
+    color: #222;
+
+    text-align: center;
+}
