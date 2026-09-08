@@ -5,22 +5,123 @@ document.addEventListener("DOMContentLoaded", () => {
 
 const videos = document.querySelectorAll(".full-video");
 
+
+// ========================================
+// TAP CONTROLS
+// LEFT 40%  = PREVIOUS
+// CENTER 20% = PLAY / PAUSE
+// RIGHT 40% = NEXT
+// ========================================
+
+const reels = Array.from(document.querySelectorAll(".reel"));
+
+reels.forEach((reel, index) => {
+
+    reel.addEventListener("click", function(event) {
+
+        // Ignore bottom information bar
+        if (event.target.closest(".post-bottom-bar")) {
+            return;
+        }
+
+        // Ignore creator menu
+        if (
+            event.target.closest(".video-menu-btn") ||
+            event.target.closest(".video-menu")
+        ) {
+            return;
+        }
+
+        const rect = reel.getBoundingClientRect();
+
+        // Position of tap inside the reel
+        const tapX = event.clientX - rect.left;
+
+        // Percentage of screen tapped
+        const tapPercent = tapX / rect.width;
+
+        const video = reel.querySelector("video.full-video");
+
+        // -------------------------------
+        // LEFT 40% → PREVIOUS
+        // -------------------------------
+
+        // LEFT → PREVIOUS
+     if (tapPercent < 0.40) {
+    if (index > 0) {
+        reels[index - 1].scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+        });
+    }
+    return;
+    }
+
+        // -------------------------------
+        // RIGHT 40% → NEXT
+        // -------------------------------
+
+       // RIGHT → NEXT
+     if (tapPercent > 0.60) {
+     if (index < reels.length - 1) {
+        reels[index + 1].scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+        });
+    }
+    return;
+    }
+
+        // -------------------------------
+        // CENTER 20% → PLAY / PAUSE
+        // -------------------------------
+
+        console.log("CENTER TAP → Play/Pause");
+
+        if (video) {
+
+            if (video.paused) {
+
+                video.play().catch(error => {
+                    console.log("Play failed:", error);
+                });
+
+            } else {
+
+                video.pause();
+
+            }
+
+        }
+
+    });
+
+});
+
+
+
+
 const observer = new IntersectionObserver((entries) => {
 
     entries.forEach(entry => {
 
-        const video = entry.target;
+        const media = entry.target;
+
+        // Only control <video> elements
+        if (media.tagName !== "VIDEO") {
+            return;
+        }
 
         if (entry.isIntersecting) {
 
-            video.play().catch(error => {
+            media.play().catch(error => {
                 console.log("Autoplay blocked:", error);
             });
 
         } else {
 
-            video.pause();
-            video.currentTime = 0;
+            media.pause();
+            media.currentTime = 0;
 
         }
 
@@ -29,7 +130,6 @@ const observer = new IntersectionObserver((entries) => {
 }, {
     threshold: 0.7
 });
-
 videos.forEach(video => {
     observer.observe(video);
 });

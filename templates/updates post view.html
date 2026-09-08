@@ -41,10 +41,25 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <div class="reel"  id="post-{{ post.id }}">
 
     
-<video class="full-video" playsinline loop preload="metadata">
-        <source src="{{ post.video_url }}" type="video/mp4">
+{% if post.media_type == "video" %}
+    <video
+        class="full-video"
+        playsinline
+        loop
+        autoplay
+        preload="auto"
+        data-post-id="{{ post.id }}"
+    >
+        <source src="{{ post.media_url }}" type="video/mp4">
     </video>
 
+{% elif post.media_type == "image" %}
+    <img
+        class="full-video"
+        src="{{ post.media_url }}"
+        alt="Happstat update"
+    >
+{% endif %}
  
 
       <!-- Three dots - only for the creator -->
