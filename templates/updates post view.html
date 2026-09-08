@@ -29,7 +29,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
 <div class="top-actions">
 
-    <a class="close-btn" href="javascript:history.back()">✕</a>
+    <a class="close-btn" href="javascript:history.back()">←</a>
 
 </div>
    
@@ -75,28 +75,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
     {% endif %}
 
+    <!-- Bottom information bar -->
 
-    <!-- Share -->
-
-    
-       <div class="video-actions">
-
-        <button class="share-button" data-post-id="{{ post.id }}">
-            ➤
-        </button>
-
-    </div>
-
-    <button
-    type="button"
-    class="add-btn"
-    onclick="handleSharePlus()"
->
-    ＋
-</button>
+    <div class="post-bottom-bar">
 
 
-<!-- Creator information -->
+   <!-- Creator information -->
+
+
     <div class="creator-info">
         
 
@@ -108,6 +94,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <img
             src="{{post.user.profile_photo }}"
             class="creator-profile-picture"
+            alt="{{ post.user.username }}">
         >
 
         <div class="creator-details">
@@ -126,18 +113,27 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     </div>
 
                 </a>
-               {% if current_user_id != post.user_id %}
+     <!-- Share -->
+
+        <button
+            class="share-button"
+            data-post-id="{{ post.id }}"
+            type="button"
+            aria-label="Share">
+
+            ➤
+
+        </button>
+
+
+    </div>
+
+
+</div>          
              
-                <button class="follow-button" data-user-id="{{ post.user_id }}">
-                    Follow
-                </button>
+            
 
-               {% endif %}
-
-             
-            </div>
-
-        </div>
+    
     {%endfor%}
    
 

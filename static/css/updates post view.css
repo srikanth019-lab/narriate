@@ -1,6 +1,6 @@
-/* ==============================
-   PAGE
-============================== */
+/* =========================================
+   Happstat - Updates Post View
+========================================= */
 
 * {
     box-sizing: border-box;
@@ -10,28 +10,22 @@ html,
 body {
     margin: 0;
     padding: 0;
-
     width: 100%;
     height: 100%;
-
     overflow: hidden;
-
     background: #000;
-
     font-family: Arial, Helvetica, sans-serif;
 }
 
 
-/* ==============================
+/* =========================================
    CLOSE BUTTON
-============================== */
+========================================= */
 
 .close-btn {
     position: fixed;
-
     top: 20px;
     left: 20px;
-
     z-index: 100;
 
     width: 42px;
@@ -45,28 +39,28 @@ body {
     background: rgba(0, 0, 0, 0.45);
 
     border-radius: 50%;
-
     text-decoration: none;
 
     font-size: 22px;
     font-weight: 400;
 
     backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
 
-    transition: background 0.2s ease,
-                transform 0.2s ease;
+    transition:
+        background 0.2s ease,
+        transform 0.2s ease;
 }
 
 .close-btn:hover {
     background: rgba(0, 0, 0, 0.7);
-
     transform: scale(1.05);
 }
 
 
-/* ==============================
-   REEL FEED
-============================== */
+/* =========================================
+   POST FEED
+========================================= */
 
 .post-feed {
     width: 100%;
@@ -76,7 +70,6 @@ body {
     overflow-x: hidden;
 
     scroll-snap-type: y mandatory;
-
     -webkit-overflow-scrolling: touch;
 
     scrollbar-width: none;
@@ -87,16 +80,15 @@ body {
 }
 
 
-/* ==============================
-   INDIVIDUAL REEL
-============================== */
+/* =========================================
+   INDIVIDUAL POST
+========================================= */
 
 .reel {
     position: relative;
 
     width: 100%;
     height: 100dvh;
-
     min-height: 100dvh;
 
     overflow: hidden;
@@ -108,13 +100,12 @@ body {
 }
 
 
-/* ==============================
+/* =========================================
    VIDEO
-============================== */
+========================================= */
 
 .full-video {
     position: absolute;
-
     inset: 0;
 
     width: 100%;
@@ -128,11 +119,10 @@ body {
 }
 
 
-/* ==============================
+/* =========================================
    BOTTOM GRADIENT
-   Makes creator information
-   easier to read
-============================== */
+   Helps creator bar remain readable
+========================================= */
 
 .reel::after {
     content: "";
@@ -143,7 +133,7 @@ body {
     right: 0;
     bottom: 0;
 
-    height: 230px;
+    height: 250px;
 
     z-index: 5;
 
@@ -158,397 +148,310 @@ body {
 }
 
 
-/* ==============================
-   CREATOR INFORMATION
-============================== */
+/* =========================================
+   BOTTOM CREATOR BAR
+========================================= */
 
-.creator-info {
+.post-bottom-bar {
     position: absolute;
 
-    left: 20px;
-    right: 20px;
-    bottom: 28px;
+    left: 14px;
+    right: 14px;
+    bottom: 18px;
 
-    z-index: 10;
+    min-height: 72px;
+
+    padding: 10px 12px;
 
     display: flex;
+    align-items: center;
+    justify-content: space-between;
 
-    align-items: flex-end;
+    flex-direction: row;
+    flex-wrap: nowrap;
 
-    gap: 12px;
+    background: rgba(0, 0, 0, 0.65);
+
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+
+    border-radius: 18px;
+
+    z-index: 20;
 }
 
 
-/* ==============================
-   CREATOR PROFILE LINK
-============================== */
+/* =========================================
+   CREATOR SECTION
+========================================= */
 
 .creator-link {
-    min-width: 0;
-
-    flex: 1;
-
     display: flex;
-
     align-items: center;
 
-    gap: 11px;
+    flex: 1 1 auto;
 
-    color: white;
+    min-width: 0;
 
     text-decoration: none;
+    color: white;
+
+    overflow: hidden;
 }
 
 
-/* ==============================
+/* =========================================
    PROFILE PICTURE
-============================== */
+========================================= */
 
 .creator-profile-picture {
     width: 48px;
     height: 48px;
 
-    flex-shrink: 0;
-
-    object-fit: cover;
+    flex: 0 0 48px;
 
     border-radius: 50%;
 
-    border: 2px solid white;
+    object-fit: cover;
 
-    background: #222;
+    border: 2px solid white;
 }
 
 
-/* ==============================
+/* =========================================
    CREATOR DETAILS
-============================== */
+========================================= */
 
 .creator-details {
+    margin-left: 10px;
+
     min-width: 0;
 
-    display: flex;
-
-    flex-direction: column;
-
-    justify-content: center;
+    overflow: hidden;
 }
 
-
-/* ==============================
-   USERNAME
-============================== */
 
 .creator-name-row {
     display: flex;
-
     align-items: center;
-
-    gap: 8px;
 }
+
 
 .creator-username {
-    color: white;
-
-    font-size: 16px;
-
+    font-size: 15px;
     font-weight: 700;
 
-    line-height: 20px;
+    color: white;
 
     white-space: nowrap;
-
     overflow: hidden;
-
     text-overflow: ellipsis;
-
-    max-width: 220px;
 }
 
-
-/* ==============================
-   BIO
-============================== */
 
 .creator-bio {
     margin-top: 3px;
 
-    color: rgba(255, 255, 255, 0.9);
+    font-size: 12px;
 
-    font-size: 13px;
-
-    line-height: 18px;
-
-    max-width: 280px;
+    color: #ddd;
 
     white-space: nowrap;
-
     overflow: hidden;
-
     text-overflow: ellipsis;
 }
 
 
-/* ==============================
-   FOLLOW BUTTON
-============================== */
-
-.follow-button {
-    flex-shrink: 0;
-
-    min-width: 78px;
-
-    height: 34px;
-
-    padding: 0 15px;
-
-    border: none;
-
-    border-radius: 8px;
-
-    background: white;
-
-    color: #111;
-
-    font-size: 14px;
-
-    font-weight: 700;
-
-    cursor: pointer;
-
-    transition: transform 0.15s ease,
-                opacity 0.15s ease;
-}
-
-.follow-button:hover {
-    transform: scale(1.04);
-
-    opacity: 0.9;
-}
-
-.follow-button:active {
-    transform: scale(0.96);
-}
-
-
-/* ==============================
-   TABLET / DESKTOP
-============================== */
-
-@media (min-width: 768px) {
-
-    .reel {
-        display: flex;
-
-        justify-content: center;
-
-        background: #000;
-    }
-
-    .full-video {
-        width: min(100%, 500px);
-
-        left: 50%;
-
-        transform: translateX(-50%);
-    }
-
-    .creator-info {
-        left: 50%;
-
-        width: min(460px, calc(100% - 40px));
-
-        right: auto;
-
-        transform: translateX(-50%);
-    }
-
-}
-
-
-/* ==============================
-   MOBILE
-============================== */
-
-@media (max-width: 600px) {
-
-    .close-btn {
-        top: 15px;
-        left: 15px;
-
-        width: 38px;
-        height: 38px;
-
-        font-size: 20px;
-    }
-  .creator-info {
-        position: absolute;
-
-        left: 15px;
-        right: 15px;
-        bottom: 30px;
-
-        z-index: 50;
-
-        display: flex;
-        align-items: flex-end;
-        gap: 9px;
-    }
-
-    .creator-profile-picture {
-        width: 44px;
-        height: 44px;
-    }
-
-    .creator-username {
-        font-size: 15px;
-        max-width: 160px;
-    }
-
-    .creator-bio {
-        font-size: 12px;
-        max-width: 190px;
-    }
-
-    .follow-button {
-        min-width: 72px;
-        height: 32px;
-        padding: 0 12px;
-        font-size: 13px;
-    }
-}
-   
-
-
-
-.reel {
-    position: relative;
-    width: 100%;
-    height: 100dvh;
-    min-height: 100dvh;
-}
-
-.video-wrapper {
-    position: relative;
-    width: 100%;
-    height: 100%;
-}
-
-.full-video {
-    display: block;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.video-actions {
-    position: absolute;
-    right: 20px;
-    bottom: 100px;
-    z-index: 20;
-}
-
+/* =========================================
+   SHARE BUTTON
+========================================= */
 
 .share-button {
-    width: 50px;
-    height: 50px;
+    width: 46px;
+    height: 46px;
 
-    border: none;
-    border-radius: 50%;
+    flex: 0 0 46px;
 
-    background: rgba(0, 0, 0, 0.55);
-    color: white;
+    margin-left: 12px;
 
     display: flex;
     align-items: center;
     justify-content: center;
 
+    border: none;
+    border-radius: 50%;
+
+    background: rgba(255, 255, 255, 0.15);
+
+    color: white;
+
+    font-size: 22px;
+
     cursor: pointer;
 
-    transition: transform 0.2s ease,
-                background 0.2s ease;
+    z-index: 30;
 }
-
-.share-button svg {
-    width: 28px;
-    height: 28px;
-
-    fill: none;
-    stroke: currentColor;
-    stroke-width: 2.5;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-}
-
 
 .share-button:hover {
-    transform: scale(1.08);
+    background: rgba(255, 255, 255, 0.25);
 }
 
 .share-button:active {
-    transform: scale(0.92);
+    transform: scale(0.94);
 }
 
 
+/* =========================================
+   MOBILE
+========================================= */
 
-.reel {
-    position: relative;
-}
+@media (max-width: 600px) {
 
-.video-menu-btn {
+    .close-btn {
+        top: 16px;
+        left: 16px;
+
+        width: 40px;
+        height: 40px;
+
+        font-size: 21px;
+    }
+
+
+    .post-bottom-bar {
     position: absolute;
-    top: 15px;
-    right: 15px;
+    left: 14px;
+    right: 14px;
+    bottom: 18px;
 
-    width: 38px;
-    height: 38px;
+    min-height: 74px;
+    padding: 10px 12px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    background: rgba(15, 15, 15, 0.78);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 18px;
+
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+
+    z-index: 20;
+}
+
+
+    .creator-profile-picture {
+        width: 44px;
+        height: 44px;
+
+        flex: 0 0 44px;
+    }
+
+
+    .creator-details {
+        margin-left: 9px;
+    }
+
+
+    .creator-username {
+        font-size: 14px;
+    }
+
+
+    .creator-bio {
+        font-size: 11px;
+    }
+
+
+    .share-button {
+         width: 46px;
+    height: 46px;
+
+    flex: 0 0 46px;
+    margin-left: 12px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
     border: none;
     border-radius: 50%;
 
-    background: rgba(0, 0, 0, 0.55);
+    background: rgba(255, 255, 255, 0.15);
     color: white;
 
-    font-size: 26px;
+    font-size: 22px;
     cursor: pointer;
-
-    z-index: 100;
+}
 }
 
-.video-menu {
-    display: none;
 
-    position: absolute;
-    top: 60px;
-    right: 15px;
+/* =========================================
+   VERY SMALL PHONES
+========================================= */
 
-    background: var(--card-bg);
-    color: var(--text);
-    border: 1px solid var(--border);
-    border-radius: 8px;
+@media (max-width: 360px) {
+
+    .post-bottom-bar {
+        left: 8px;
+        right: 8px;
+        bottom: 10px;
+
+        padding: 8px;
+
+        min-height: 64px;
+    }
+
+
+    .creator-profile-picture {
+        width: 40px;
+        height: 40px;
+
+        flex: 0 0 40px;
+    }
+
+
+    .creator-details {
+        margin-left: 8px;
+    }
+
+
+    .creator-username {
+        font-size: 13px;
+    }
+
+
+    .creator-bio {
+        font-size: 10px;
+    }
+
+
+    .share-button {
+        width: 40px;
+        height: 40px;
+
+        flex: 0 0 40px;
+
+        margin-left: 8px;
+
+        font-size: 19px;
+    }
+}
+
+
+
+/* =========================================
+   CREATOR INFO WRAPPER
+========================================= */
+
+.creator-info {
+    display: flex;
+    align-items: center;
+
+    flex: 1 1 auto;
+    min-width: 0;
 
     overflow: hidden;
-
-    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.3);
-
-    z-index: 101;
-}
-
-.video-menu.show {
-    display: block;
-}
-
-.delete-video-btn {
-    border: none;
-    background: white;
-
-    color: red;
-
-    padding: 12px 20px;
-
-    cursor: pointer;
-}
-
-.delete-video-btn:hover {
-    background: var(--input-bg);
 }
