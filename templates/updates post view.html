@@ -36,27 +36,27 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <div class="post-feed">
 
 
- {% for post in posts %}
 
-<div class="reel"  id="post-{{ post.id }}">
+
+<div class="reel"  id="post-{{current_post.id }}">
 
     
-{% if post.media_type == "video" %}
+{% if current_post.media_type == "video" %}
     <video
         class="full-video"
         playsinline
         loop
         autoplay
         preload="auto"
-        data-post-id="{{ post.id }}"
+        data-post-id="{{ current_post.id }}"
     >
-        <source src="{{ post.media_url }}" type="video/mp4">
+        <source src="{{ current_post.media_url }}" type="video/mp4">
     </video>
 
-{% elif post.media_type == "image" %}
+{% elif current_post.media_type == "image" %}
     <img
         class="full-video"
-        src="{{ post.media_url }}"
+        src="{{ current_post.media_url }}"
         alt="Happstat update"
     >
 {% endif %}
@@ -64,12 +64,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
       <!-- Three dots - only for the creator -->
     
-    {% if current_user_id == post.user_id and source == 'videos' %}
+    {% if current_user_id == current_post.user_id and source == 'videos' %}
 
         <button
             class="video-menu-btn"
             type="button"
-            data-post-id="{{ post.id }}"
+            data-post-id="{{ current_post.id }}"
             onclick="toggleVideoMenu(event, this.dataset.postId)">
             ⋮
         </button>
@@ -77,12 +77,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <!-- Hidden menu -->
         <div
             class="video-menu"
-            id="video-menu-{{ post.id }}">
+            id="video-menu-{{ current_post.id }}">
 
             <button
                 class="delete-video-btn"
                 type="button"
-                onclick="deleteVideo('{{ post.id }}')">
+                onclick="deleteVideo('{{ current_post.id }}')">
                 Delete
             </button>
 
@@ -132,7 +132,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
         <button
             class="share-button"
-            data-post-id="{{ post.id }}"
+            data-post-id="{{ current_post.id }}"
             type="button"
             aria-label="Share">
 
@@ -145,11 +145,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
 
 </div>          
-             
-            
 
-    
-    {%endfor%}
    
 
 </div>
