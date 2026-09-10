@@ -48,6 +48,20 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <div class="updates-title">
         Happstat
     </div>
+
+      <button
+        class="happstat-share-btn"
+        type="button"
+        onclick="shareHappstat()"
+        aria-label="Share Happstat">
+        
+         <svg viewBox="0 0 24 24">
+        <path d="M5 19c0-7 4-11 11-11h3"></path>
+        <path d="M15 4l4 4-4 4"></path>
+    </svg>
+
+</button>
+
    </header>
     {% if logged_in_user_id %}
     <form
@@ -568,6 +582,47 @@ document.addEventListener(
 
     }
 );
+
+
+
+async function shareHappstat() {
+
+    if (window.happstatSharing === true) {
+        return;
+    }
+
+    window.happstatSharing = true;
+
+    const shareUrl = window.location.origin + "/signup";
+
+    try {
+
+        if (navigator.share) {
+
+            await navigator.share({
+                title: "Happstat",
+                text: "Join me on Happstat!",
+                url: shareUrl
+            });
+
+        } else {
+
+            await navigator.clipboard.writeText(shareUrl);
+            alert("Happstat signup link copied!");
+
+        }
+
+    } catch (error) {
+
+        // User cancelled the share sheet.
+        console.log("Share ended:", error.name);
+
+    } finally {
+
+        window.happstatSharing = false;
+
+    }
+}
 
 </script>
 <script src="{{ url_for('static', filename='js/theme.js') }}"></script>

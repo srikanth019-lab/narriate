@@ -433,3 +433,47 @@ body {
 .nav-item.active {
     color: var(--text);
 }
+
+
+
+/* =========================
+   HAPPSTAT HEADER
+========================= */
+
+.top-bar {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Share button on right side */
+
+.happstat-share-btn {
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 40px;
+    height: 40px;
+    border: none;
+    background: transparent;
+    padding: 0;
+    cursor: pointer;
+}
+
+.happstat-share-btn svg {
+    width: 30px;
+    height: 30px;
+    fill: none;
+    stroke: white;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+/* Small tap feedback */
+
+.happstat-share-btn:active {
+    transform: translateY(-50%) scale(0.90);
+}
