@@ -580,6 +580,10 @@ def view_profile(username):
     followers_count = Follow.query.filter_by(following_id=profile_user.id).count()
     following_count = Follow.query.filter_by(follower_id=profile_user.id).count()
 
+
+    print("LOGGED IN USER ID:", current_user_id)
+    print("PROFILE USER ID:", profile_user.id)
+
     return render_template(
         "profile.html",
         user=profile_user,
@@ -897,9 +901,25 @@ def updates_post_view(post_id):
 
     current_post = updatesPost.query.get_or_404(post_id)
 
+
+    print("HAPP ID:", current_post.id)
+    print("HAPP USER ID:", current_post.user_id)
+    print("HAPP USERNAME:", current_post.user.username if current_post.user else None)
+
+
+    logged_in_user_id = session.get("user_id")
+
+    if not logged_in_user_id:
+        return redirect(url_for("login"))
+
     source = request.args.get("source", "updates")
 
+    # ========================================
+    # VIDEOS TAB
+    # ========================================
+
     if source == "videos":
+
         posts = updatesPost.query.filter(
             updatesPost.user_id == current_post.user_id,
             updatesPost.status == "ready",
@@ -907,27 +927,92 @@ def updates_post_view(post_id):
         ).order_by(
             updatesPost.created_at.desc()
         ).all()
+
+    # ========================================
+    # UPDATES / STORIES
+    # ========================================
+
     else:
-        # Updates page
-        posts = updatesPost.query.filter(
-            updatesPost.user_id == current_post.user_id,
+
+        # Get people the logged-in user follows
+        following_ids = db.session.execute(
+            db.select(Follow.following_id).where(
+                Follow.follower_id == logged_in_user_id
+            )
+        ).scalars().all()
+
+        # Include user's own Happs
+        allowed_user_ids = following_ids + [logged_in_user_id]
+
+        # Get active Happs
+        all_posts = updatesPost.query.filter(
+            updatesPost.user_id.in_(allowed_user_ids),
             updatesPost.status == "ready",
             updatesPost.status_expires_at > datetime.utcnow()
         ).order_by(
             updatesPost.created_at.desc()
         ).all()
-    my_uploads = updatesPost.query.filter(
-        updatesPost.status == "ready",
-        updatesPost.video_expires_at > datetime.utcnow()
-    ).order_by(
-        updatesPost.created_at.desc()
-    ).all()
+
+        # ========================================
+        # ONLY ONE HAPP PER USER
+        # LATEST ACTIVE HAPP
+        # ========================================
+
+        latest_by_user = {}
+
+        for post in all_posts:
+
+            if post.user_id not in latest_by_user:
+                latest_by_user[post.user_id] = post
+
+        posts = list(latest_by_user.values())
+
+        # Newest Happ first
+        posts.sort(
+            key=lambda post: post.created_at,
+            reverse=True
+        )
+
+    # ========================================
+    # BUILD STORY DATA FOR JAVASCRIPT
+    # ========================================
+
+    story_posts = []
+
+    for post in posts:
+
+        story_posts.append({
+            "id": post.id,
+            "user_id": post.user_id,
+            "media_url": post.media_url,
+            "media_type": post.media_type,
+
+            "username": post.user.username
+                if post.user else "",
+
+            "bio": post.user.bio
+                if post.user else "",
+
+            "profile_photo": post.user.profile_photo
+                if post.user else "",
+
+            "created_at": post.created_at.isoformat()
+                if post.created_at else "",
+
+            "profile_url": url_for(
+                "view_profile",
+                username=post.user.username
+            ) if post.user else "#"
+        })
+
+    print("STORY SEQUENCE:", [post["id"] for post in story_posts])
 
     return render_template(
         "updates post view.html",
         posts=posts,
+        story_posts=story_posts,
         current_post=current_post,
-        current_user_id=session.get("user_id"),
+        current_user_id=logged_in_user_id,
         source=source
     )
 

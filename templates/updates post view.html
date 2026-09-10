@@ -102,27 +102,27 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         
 
         <a
-                href="{{ url_for('view_profile', username=post.user.username) }}"
+                href="{{ url_for('view_profile', username=current_post.user.username) }}"
                 class="creator-link"
             >
 
         <img
-            src="{{post.user.profile_photo }}"
+            src="{{current_post.user.profile_photo }}"
             class="creator-profile-picture"
-            alt="{{ post.user.username }}">
-        >
+            alt="{{ current_post.user.username }}">
+        
 
         <div class="creator-details">
 
             <div class="creator-name-row">
 
                 <span class="creator-username">
-                    {{ post.user.username }}
+                    {{ current_post.user.username }}
                 </span>
                </div>
 
                         <div class="creator-bio">
-                            {{ post.user.bio }}
+                            {{ current_post.user.bio }}
                         </div>
 
                     </div>
