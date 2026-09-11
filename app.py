@@ -347,7 +347,7 @@ def login():
     if request.method == "GET":
         return render_template("login.html")
 
-    identifier = request.form.get("identifier")
+    identifier = request.form.get("identifier").strip()
     password = request.form.get("password")
 
     print("Identifier:",repr(identifier))

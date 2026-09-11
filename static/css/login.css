@@ -150,6 +150,8 @@ button:active{
     display: flex;
     align-items: center;
     justify-content: center;
+
+    color: var(--password-icon);
 }
 
 .toggle-password svg {
