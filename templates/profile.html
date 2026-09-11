@@ -200,7 +200,7 @@ gtag('event', 'sign_up', {
     </a>
 
     <a href="{{ url_for('profile') }}" class="nav-item active">
-        <span class="nav-icon"> 👤</span>
+        <img src="{{ user.profile_photo }}" class="nav-profile-photo" alt="Profile">
         <span>Profile</span>
     </a>
 </nav>

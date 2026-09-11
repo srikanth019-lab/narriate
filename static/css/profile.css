@@ -466,3 +466,12 @@ body{
     cursor: pointer;
     z-index: 1001;
 }
+
+
+.nav-profile-photo {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    object-fit: cover;
+    display: block;
+}

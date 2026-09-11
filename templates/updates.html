@@ -175,9 +175,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <span>Home</span>
     </a>
 
-    <a href="{{ url_for('profile') }}" class="nav-item">
-        <span class="nav-icon"> 👤</span>
-        <span>Profile</span>
+   <a href="{{ url_for('profile') }}" class="nav-item active">
+    {% if current_user and current_user.profile_photo %}
+        <img src="{{ current_user.profile_photo }}" class="nav-profile-photo" alt="Profile">
+    {% else %}
+        <img src="{{ url_for('static', filename='images/default_profile.png') }}" class="nav-profile-photo" alt="Profile">
+    {% endif %}
+    <span>Profile</span>
+</a>
     </a>
 </nav>
 
