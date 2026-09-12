@@ -321,151 +321,343 @@ async function handleSelectedMedia(file) {
             : "image";
 
 
-    try {
+    /* =========================
+       CHECK VIDEO DURATION
+    ========================= */
 
-        /* =========================
-           CLOUDINARY UPLOAD
-        ========================= */
+    if (mediaType === "video") {
 
-        console.log(
-            "Uploading to Cloudinary..."
-        );
+        const video = document.createElement("video");
+        const videoURL = URL.createObjectURL(file);
 
-        const cloudinaryData =
-            await uploadToCloudinary(
-                file,
-                mediaType
+        video.preload = "metadata";
+
+        video.onloadedmetadata = async function () {
+
+            const duration = video.duration;
+
+            URL.revokeObjectURL(videoURL);
+
+            console.log(
+                "Video duration:",
+                duration,
+                "seconds"
             );
 
+            if (duration > 30) {
 
-        console.log(
-            "Cloudinary upload successful"
-        );
+                alert(
+                    "Video must be 30 seconds or less."
+                );
 
-        console.log(
-            "Secure URL:",
-            cloudinaryData.secure_url
-        );
+                cameraInput.value = "";
+                photosInput.value = "";
 
-        console.log(
-            "Public ID:",
-            cloudinaryData.public_id
-        );
+                uploadProgress.classList.remove("show");
 
-
-        /* =========================
-           PROCESSING
-        ========================= */
-
-        showProcessing();
-
-
-        /* =========================
-           SAVE UPDATE IN FLASK
-        ========================= */
-
-        console.log("Saving Update...");
-
-
-        const saveResponse = await fetch(
-            "/updates/create",
-            {
-                method: "POST",
-
-                headers: {
-                    "Content-Type": "application/json"
-                },
-
-                body: JSON.stringify({
-
-                    emoji_id: selectedEmojiId,
-
-                    media_url:
-                        cloudinaryData.secure_url,
-
-                    media_type:
-                        mediaType,
-
-                    cloudinary_public_id:
-                        cloudinaryData.public_id
-
-                })
+                return;
 
             }
-        );
+
+            /* 30 seconds or less → continue */
+
+            try {
+
+                /* =========================
+                   CLOUDINARY UPLOAD
+                ========================= */
+
+                console.log(
+                    "Uploading to Cloudinary..."
+                );
+
+                const cloudinaryData =
+                    await uploadToCloudinary(
+                        file,
+                        mediaType
+                    );
 
 
-        const saveData =
-            await saveResponse.json();
+                console.log(
+                    "Cloudinary upload successful"
+                );
+
+                console.log(
+                    "Secure URL:",
+                    cloudinaryData.secure_url
+                );
+
+                console.log(
+                    "Public ID:",
+                    cloudinaryData.public_id
+                );
 
 
-        if (
-            !saveResponse.ok ||
-            !saveData.success
-        ) {
+                /* =========================
+                   PROCESSING
+                ========================= */
 
-            console.error(
-                "Save Update error:",
-                saveData
+                showProcessing();
+
+
+                /* =========================
+                   SAVE UPDATE IN FLASK
+                ========================= */
+
+                console.log("Saving Update...");
+
+
+                const saveResponse = await fetch(
+                    "/updates/create",
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+
+                        body: JSON.stringify({
+
+                            emoji_id: selectedEmojiId,
+
+                            media_url:
+                                cloudinaryData.secure_url,
+
+                            media_type:
+                                mediaType,
+
+                            cloudinary_public_id:
+                                cloudinaryData.public_id
+
+                        })
+
+                    }
+                );
+
+
+                const saveData =
+                    await saveResponse.json();
+
+
+                if (
+                    !saveResponse.ok ||
+                    !saveData.success
+                ) {
+
+                    console.error(
+                        "Save Update error:",
+                        saveData
+                    );
+
+                    throw new Error(
+                        saveData.error ||
+                        "Could not save Update"
+                    );
+
+                }
+
+
+                /* =========================
+                   SUCCESS
+                ========================= */
+
+                console.log(
+                    "Update saved successfully!"
+                );
+
+                console.log(
+                    "Post ID:",
+                    saveData.post_id
+                );
+
+
+                showSuccess();
+
+
+                /*
+                   Give the user a very short
+                   confirmation before redirecting.
+                */
+
+                setTimeout(() => {
+
+                    window.location.href =
+                        "/updates";
+
+                }, 600);
+
+
+            } catch (error) {
+
+                console.error(
+                    "UPDATE UPLOAD ERROR:",
+                    error
+                );
+
+
+                uploadProgress.classList.remove("show");
+
+
+                alert(
+                    "Could not post your Update.\n\n" +
+                    error.message
+                );
+
+            }
+
+        };
+
+        video.src = videoURL;
+
+    } else {
+
+        /* Not a video → upload immediately */
+
+        try {
+
+            /* =========================
+               CLOUDINARY UPLOAD
+            ========================= */
+
+            console.log(
+                "Uploading to Cloudinary..."
             );
 
-            throw new Error(
-                saveData.error ||
-                "Could not save Update"
+            const cloudinaryData =
+                await uploadToCloudinary(
+                    file,
+                    mediaType
+                );
+
+
+            console.log(
+                "Cloudinary upload successful"
+            );
+
+            console.log(
+                "Secure URL:",
+                cloudinaryData.secure_url
+            );
+
+            console.log(
+                "Public ID:",
+                cloudinaryData.public_id
+            );
+
+
+            /* =========================
+               PROCESSING
+            ========================= */
+
+            showProcessing();
+
+
+            /* =========================
+               SAVE UPDATE IN FLASK
+            ========================= */
+
+            console.log("Saving Update...");
+
+
+            const saveResponse = await fetch(
+                "/updates/create",
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+
+                    body: JSON.stringify({
+
+                        emoji_id: selectedEmojiId,
+
+                        media_url:
+                            cloudinaryData.secure_url,
+
+                        media_type:
+                            mediaType,
+
+                        cloudinary_public_id:
+                            cloudinaryData.public_id
+
+                    })
+
+                }
+            );
+
+
+            const saveData =
+                await saveResponse.json();
+
+
+            if (
+                !saveResponse.ok ||
+                !saveData.success
+            ) {
+
+                console.error(
+                    "Save Update error:",
+                    saveData
+                );
+
+                throw new Error(
+                    saveData.error ||
+                    "Could not save Update"
+                );
+
+            }
+
+
+            /* =========================
+               SUCCESS
+            ========================= */
+
+            console.log(
+                "Update saved successfully!"
+            );
+
+            console.log(
+                "Post ID:",
+                saveData.post_id
+            );
+
+
+            showSuccess();
+
+
+            /*
+               Give the user a very short
+               confirmation before redirecting.
+            */
+
+            setTimeout(() => {
+
+                window.location.href =
+                    "/updates";
+
+            }, 600);
+
+
+        } catch (error) {
+
+            console.error(
+                "UPDATE UPLOAD ERROR:",
+                error
+            );
+
+
+            uploadProgress.classList.remove("show");
+
+
+            alert(
+                "Could not post your Update.\n\n" +
+                error.message
             );
 
         }
 
-
-        /* =========================
-           SUCCESS
-        ========================= */
-
-        console.log(
-            "Update saved successfully!"
-        );
-
-        console.log(
-            "Post ID:",
-            saveData.post_id
-        );
-
-
-        showSuccess();
-
-
-        /*
-           Give the user a very short
-           confirmation before redirecting.
-        */
-
-        setTimeout(() => {
-
-            window.location.href =
-                "/updates";
-
-        }, 600);
-
-
-    } catch (error) {
-
-        console.error(
-            "UPDATE UPLOAD ERROR:",
-            error
-        );
-
-
-        uploadProgress.classList.remove("show");
-
-
-        alert(
-            "Could not post your Update.\n\n" +
-            error.message
-        );
-
     }
-
-}
 
 
 /* =========================
@@ -491,7 +683,7 @@ cameraInput.addEventListener(
     }
 );
 
-
+}
 /* =========================
    PHOTOS FILE SELECTED
 ========================= */
