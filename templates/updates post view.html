@@ -50,13 +50,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         preload="auto"
         data-post-id="{{ current_post.id }}"
     >
-        <source src="{{ current_post.media_url }}" type="video/mp4">
+       <source src="{{ current_media_url }}" type="video/mp4">
     </video>
 
 {% elif current_post.media_type == "image" %}
     <img
         class="full-video"
-        src="{{ current_post.media_url }}"
+        src="{{ current_media_url }}"
         alt="Happstat update"
     >
 {% endif %}

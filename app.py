@@ -263,6 +263,21 @@ class updatesPost(db.Model):
 with app.app_context():
     db.create_all()
 
+
+# =======================
+# 3️⃣.5️⃣ HELPER FUNCTIONS
+# =======================
+def cloudinary_720p_url(media_url):
+    """Convert Cloudinary URL to 720p quality"""
+    if not media_url or "cloudinary" not in media_url:
+        return media_url
+    
+    # Insert quality transformation before the filename
+    return media_url.replace(
+        "/upload/",
+        "/upload/w_1280,h_1280,c_limit,q_auto/"
+    )
+
 # =======================
 # 4️⃣ ROUTES
 # =======================
@@ -1009,7 +1024,10 @@ def updates_post_view(post_id):
         story_posts.append({
             "id": post.id,
             "user_id": post.user_id,
-            "media_url": post.media_url,
+            "media_url": cloudinary_720p_url(
+            post.media_url
+        ) if post.media_type == "video" else post.media_url,
+
             "media_type": post.media_type,
 
             "username": post.user.username
@@ -1032,11 +1050,16 @@ def updates_post_view(post_id):
 
     print("STORY SEQUENCE:", [post["id"] for post in story_posts])
 
+    current_media_url = cloudinary_720p_url(
+        current_post.media_url
+    ) if current_post.media_type == "video" else current_post.media_url
+
     return render_template(
         "updates post view.html",
         posts=posts,
         story_posts=story_posts,
         current_post=current_post,
+        current_media_url=current_media_url,
         current_user_id=logged_in_user_id,
         source=source
     )
