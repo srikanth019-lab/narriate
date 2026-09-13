@@ -62,22 +62,26 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 {% endif %}
  
 
-      <!-- Three dots - only for the creator -->
-    
-    {% if current_user_id == current_post.user_id and source == 'videos' %}
+   
 
-        <button
-            class="video-menu-btn"
-            type="button"
-            data-post-id="{{ current_post.id }}"
-            onclick="toggleVideoMenu(event, this.dataset.postId)">
-            ⋮
-        </button>
+<!-- Three dots - only for the creator -->
 
-        <!-- Hidden menu -->
-        <div
-            class="video-menu"
-            id="video-menu-{{ current_post.id }}">
+{% if current_user_id == current_post.user_id %}
+
+    <button
+        class="video-menu-btn"
+        type="button"
+        data-post-id="{{ current_post.id }}"
+        onclick="toggleVideoMenu(event, this.dataset.postId)">
+        ⋮
+    </button>
+
+    <!-- Hidden menu -->
+    <div
+        class="video-menu"
+        id="video-menu-{{ current_post.id }}">
+
+        {% if source == 'videos' %}
 
             <button
                 class="delete-video-btn"
@@ -86,10 +90,20 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 Delete
             </button>
 
-        </div>
+        {% else %}
 
-    {% endif %}
+            <button
+                class="delete-video-btn"
+                type="button"
+                onclick="deleteHapps('{{ current_post.id }}')">
+                Delete
+            </button>
 
+        {% endif %}
+
+    </div>
+
+{% endif %}
     <!-- Bottom information bar -->
 
     <div class="post-bottom-bar">

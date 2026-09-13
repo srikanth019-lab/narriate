@@ -243,11 +243,11 @@ function toggleVideoMenu(event, postId) {
 
 function deleteVideo(postId) {
 
-    if (!confirm("Are you sure you want to delete this video?")) {
+    if (!confirm("Are you sure you want to delete this happs?")) {
         return;
     }
 
-    fetch(`/delete-updates-post/${postId}`, {
+    fetch(`/delete-update-post/${postId}`, {
         method: "POST"
     })
     .then(response => {
@@ -308,9 +308,85 @@ function sharePost(postId) {
     }
 }
 
+
+
+function deleteHapps(postId) {
+
+    if (!confirm("Are you sure you want to delete this Happs?")) {
+        return;
+    }
+
+    fetch(`/delete-updates-post/${postId}`, {
+        method: "POST"
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error("Delete failed: " + response.status);
+        }
+
+        return response.json();
+    })
+    .then(data => {
+
+        if (data.success) {
+
+            const post = document.getElementById("post-" + postId);
+
+            if (post) {
+                post.remove();
+            }
+
+             // Go directly back to Updates after deletion
+            window.location.replace("/updates");
+
+        } else {
+            alert(data.message || "Unable to delete Happs.");
+        }
+
+    })
+    .catch(error => {
+        console.error("Delete Happs failed:", error);
+        alert("Something went wrong.");
+    });
+}
+
+
+
+function deleteVideo(postId) {
+
+    if (!confirm("Are you sure you want to delete this Moment?")) {
+        return;
+    }
+
+    fetch(`/delete-moment/${postId}`, {
+        method: "POST"
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error("Delete failed: " + response.status);
+        }
+
+        return response.json();
+    })
+    .then(data => {
+
+        if (data.success) {
+            window.location.replace("/updates");
+        } else {
+            alert(data.message || "Unable to delete Moment.");
+        }
+
+    })
+    .catch(error => {
+        console.error("Delete Moment failed:", error.message);
+        alert("Something went wrong.");
+    });
+}
+
 // Make functions available to the HTML/page
 window.sharePost = sharePost;
 window.deleteVideo = deleteVideo;
+window.deleteHapps = deleteHapps;
 window.toggleVideoMenu = toggleVideoMenu;
 
 });

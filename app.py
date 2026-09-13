@@ -250,6 +250,12 @@ class updatesPost(db.Model):
         )
     )
 
+    happs_deleted = db.Column(
+    db.Boolean,
+    nullable=False,
+    default=False
+)
+
 
 
 with app.app_context():
@@ -863,6 +869,7 @@ def updates():
         active_my_status = updatesPost.query.filter(
             updatesPost.user_id == logged_in_user_id,
             updatesPost.status == "ready",
+            updatesPost.happs_deleted == False,
             updatesPost.status_expires_at > datetime.utcnow()
         ).order_by(
             updatesPost.created_at.desc()
@@ -948,6 +955,7 @@ def updates_post_view(post_id):
         all_posts = updatesPost.query.filter(
             updatesPost.user_id.in_(allowed_user_ids),
             updatesPost.status == "ready",
+            updatesPost.happs_deleted == False,
             updatesPost.status_expires_at > datetime.utcnow()
         ).order_by(
             updatesPost.created_at.desc()
@@ -1021,7 +1029,34 @@ def updates_post_view(post_id):
 @app.route("/delete-updates-post/<int:post_id>", methods=["POST"])
 def delete_updates_post(post_id):
 
-   
+    if "user_id" not in session:
+        return jsonify({
+            "success": False,
+            "message": "Please login."
+        }), 401
+
+    post = updatesPost.query.get_or_404(post_id)
+
+    # ONLY THE CREATOR CAN DELETE
+    if post.user_id != session["user_id"]:
+        return jsonify({
+            "success": False,
+            "message": "You cannot delete this post."
+        }), 403
+
+    # Hide from Stories/Happs only
+    post.happs_deleted = True
+
+    db.session.commit()
+
+    return jsonify({
+        "success": True
+    })
+
+
+
+@app.route("/delete-moment/<int:post_id>", methods=["POST"])
+def delete_moment(post_id):
 
     if "user_id" not in session:
         return jsonify({
@@ -1030,21 +1065,34 @@ def delete_updates_post(post_id):
         }), 401
 
     post = updatesPost.query.get_or_404(post_id)
-    
+
     # ONLY THE CREATOR CAN DELETE
     if post.user_id != session["user_id"]:
         return jsonify({
             "success": False,
-            "message": "You cannot delete this post."
+            "message": "You cannot delete this Moment."
         }), 403
 
+    # Delete media from Cloudinary
+    if post.cloudinary_public_id:
+        try:
+            resource_type = "video" if post.media_type == "video" else "image"
+
+            cloudinary.uploader.destroy(
+                post.cloudinary_public_id,
+                resource_type=resource_type
+            )
+
+        except Exception as e:
+            print("Cloudinary delete failed:", e)
+
+    # Permanently delete database record
     db.session.delete(post)
     db.session.commit()
 
     return jsonify({
         "success": True
     })
-
 
 
 @app.route('/update-emoji')
