@@ -264,7 +264,7 @@ with app.app_context():
 @app.route("/")
 def home():
     if "user_id" in session:
-        return redirect(url_for("profile"))
+        return redirect(url_for("updates"))
     return redirect(url_for("login"))
 
 
