@@ -122,6 +122,8 @@ class EmojiPost(db.Model):
 
     image_url = db.Column(db.String(500), nullable=False)
 
+    cloudinary_public_id = db.Column(db.String(500), nullable=True)
+
     content = db.Column(db.Text, nullable=True)
     media_type = db.Column(db.String(10), nullable=False)
     created_at = db.Column(
@@ -681,7 +683,8 @@ def emoji_gallery(username, emoji_id):
             user_id=session["user_id"],
             emoji_id=emoji.id,
             image_url=result["secure_url"],
-            media_type=media_type
+            media_type=media_type,
+            cloudinary_public_id=result.get("public_id")
         )
 
 
@@ -726,8 +729,6 @@ def delete_post(post_id):
     user_id = session.get("user_id")
     post = EmojiPost.query.get_or_404(post_id)
 
-    
-
     if not user_id:
         flash("Please log in first.")
         return redirect(url_for("login"))
@@ -737,6 +738,22 @@ def delete_post(post_id):
 
     emoji_id = post.emoji_id
 
+    # Delete media from Cloudinary
+    if post.cloudinary_public_id:
+        try:
+            resource_type = "video" if post.media_type == "video" else "image"
+
+            cloudinary.uploader.destroy(
+                post.cloudinary_public_id,
+                resource_type=resource_type
+            )
+
+            print("Cloudinary media deleted:", post.cloudinary_public_id)
+
+        except Exception as e:
+            print("Cloudinary delete failed:", e)
+
+    # Delete post from database
     db.session.delete(post)
     db.session.commit()
 
