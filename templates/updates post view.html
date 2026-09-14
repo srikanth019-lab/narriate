@@ -36,27 +36,27 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <div class="post-feed">
 
 
+{% for post in story_posts %}
 
-
-<div class="reel"  id="post-{{current_post.id }}">
+<div class="reel"  id="post-{{post.id }}">
 
     
-{% if current_post.media_type == "video" %}
+{% if post.media_type == "video" %}
     <video
         class="full-video"
         playsinline
         loop
         autoplay
         preload="auto"
-        data-post-id="{{ current_post.id }}"
+        data-post-id="{{ post.id }}"
     >
-       <source src="{{ current_media_url }}" type="video/mp4">
+       <source src="{{ post.media_url }}" type="video/mp4">
     </video>
 
-{% elif current_post.media_type == "image" %}
+{% elif post.media_type == "image" %}
     <img
         class="full-video"
-        src="{{ current_media_url }}"
+        src="{{ post.media_url }}"
         alt="Happstat update"
     >
 {% endif %}
@@ -66,12 +66,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
 <!-- Three dots - only for the creator -->
 
-{% if current_user_id == current_post.user_id %}
+{% if current_user_id == post.user_id %}
 
     <button
         class="video-menu-btn"
         type="button"
-        data-post-id="{{ current_post.id }}"
+        data-post-id="{{ post.id }}"
         onclick="toggleVideoMenu(event, this.dataset.postId)">
         ⋮
     </button>
@@ -79,14 +79,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <!-- Hidden menu -->
     <div
         class="video-menu"
-        id="video-menu-{{ current_post.id }}">
+        id="video-menu-{{ post.id }}">
 
         {% if source == 'videos' %}
 
             <button
                 class="delete-video-btn"
                 type="button"
-                onclick="deleteVideo('{{ current_post.id }}')">
+                onclick="deleteVideo('{{ post.id }}')">
                 Delete
             </button>
 
@@ -95,7 +95,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <button
                 class="delete-video-btn"
                 type="button"
-                onclick="deleteHapps('{{ current_post.id }}')">
+                onclick="deleteHapps('{{ post.id }}')">
                 Delete
             </button>
 
@@ -116,14 +116,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         
 
         <a
-                href="{{ url_for('view_profile', username=current_post.user.username) }}"
+               href="{{ post.profile_url }}"
                 class="creator-link"
             >
 
         <img
-            src="{{current_post.user.profile_photo }}"
+            src="{{post.profile_photo }}"
             class="creator-profile-picture"
-            alt="{{ current_post.user.username }}">
+            alt="{{ post.username }}">
         
 
         <div class="creator-details">
@@ -131,12 +131,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <div class="creator-name-row">
 
                 <span class="creator-username">
-                    {{ current_post.user.username }}
+                    {{ post.username }}
                 </span>
                </div>
 
                         <div class="creator-bio">
-                            {{ current_post.user.bio }}
+                            {{ post.bio }}
                         </div>
 
                     </div>
@@ -146,7 +146,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
         <button
             class="share-button"
-            data-post-id="{{ current_post.id }}"
+            data-post-id="{{ post.id }}"
             type="button"
             aria-label="Share">
 
@@ -160,10 +160,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
 </div>          
 
-   
-
 </div>
-
+{% endfor %}
 <script>
 document.querySelectorAll('.share-button').forEach(function(button) {
     button.addEventListener('click', function() {

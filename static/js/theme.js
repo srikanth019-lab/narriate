@@ -1,14 +1,13 @@
+// Apply theme immediately — before the page is displayed
+const savedTheme = localStorage.getItem("theme") || "light";
+document.documentElement.setAttribute("data-theme", savedTheme);
+
+
+// Setup theme toggle after HTML is loaded
 document.addEventListener("DOMContentLoaded", function () {
 
     const toggle = document.getElementById("themeToggle");
 
-    // Get saved theme
-    const savedTheme = localStorage.getItem("theme") || "light";
-
-    // Apply saved theme
-    document.documentElement.setAttribute("data-theme", savedTheme);
-
-    // Set toggle position
     if (toggle) {
         toggle.checked = savedTheme === "dark";
 
@@ -16,13 +15,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
             const newTheme = this.checked ? "dark" : "light";
 
-            // Apply theme
             document.documentElement.setAttribute("data-theme", newTheme);
 
-            // Save theme
             localStorage.setItem("theme", newTheme);
-
         });
     }
 
-});
+});                                                      
+
+
+

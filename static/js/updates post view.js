@@ -15,6 +15,10 @@ const videos = document.querySelectorAll(".full-video");
 
 const reels = Array.from(document.querySelectorAll(".reel"));
 
+if (reels.length > 0) {
+    reels[0].classList.add("active");
+}
+
 reels.forEach((reel, index) => {
 
     reel.addEventListener("click", function(event) {
@@ -40,37 +44,46 @@ reels.forEach((reel, index) => {
         // Percentage of screen tapped
         const tapPercent = tapX / rect.width;
 
+        console.log("tapX:", tapX);
+        console.log("reel width:", rect.width);
+        console.log("tapPercent:", tapPercent);
+
         const video = reel.querySelector("video.full-video");
 
         // -------------------------------
         // LEFT 40% → PREVIOUS
         // -------------------------------
 
-        // LEFT → PREVIOUS
-     if (tapPercent < 0.40) {
+       if (tapPercent < 0.40) {
+    console.log("LEFT DETECTED", index);
+
     if (index > 0) {
-        reels[index - 1].scrollIntoView({
-            behavior: "smooth",
-            block: "start"
-        });
-    }
-    return;
+        console.log("GOING PREVIOUS");
+        
+        reels[index - 1].classList.add("active");
+        reel.classList.remove("active");
+    } else {
+        console.log("ALREADY FIRST REEL");
     }
 
-        // -------------------------------
-        // RIGHT 40% → NEXT
-        // -------------------------------
-
-       // RIGHT → NEXT
-     if (tapPercent > 0.60) {
-     if (index < reels.length - 1) {
-        reels[index + 1].scrollIntoView({
-            behavior: "smooth",
-            block: "start"
-        });
-    }
     return;
+}
+
+
+if (tapPercent > 0.60) {
+    console.log("RIGHT DETECTED", index);
+
+    if (index < reels.length - 1) {
+        console.log("GOING NEXT");
+
+       reels[index + 1].classList.add("active");
+       reel.classList.remove("active");
+    } else {
+        console.log("ALREADY LAST REEL");
     }
+
+    return;
+}
 
         // -------------------------------
         // CENTER 20% → PLAY / PAUSE
