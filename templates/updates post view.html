@@ -33,13 +33,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
 </div>
    
-<div class="post-feed">
-
+<div class="post-feed" data-current-post-id="{{ current_post.id }}">
 
 {% for post in story_posts %}
 
-<div class="reel"  id="post-{{post.id }}">
-
+<div class="reel" id="post-{{ post.id }}" data-post-id="{{ post.id }}">
     
 {% if post.media_type == "video" %}
     <video

@@ -15,8 +15,15 @@ const videos = document.querySelectorAll(".full-video");
 
 const reels = Array.from(document.querySelectorAll(".reel"));
 
-if (reels.length > 0) {
-    reels[0].classList.add("active");
+const feed = document.querySelector(".post-feed");
+
+const currentPostId = feed.dataset.currentPostId;
+
+// Set the clicked post as active
+const currentPost = document.getElementById(`post-${currentPostId}`);
+
+if (currentPost) {
+    currentPost.classList.add("active");
 }
 
 reels.forEach((reel, index) => {
@@ -147,8 +154,6 @@ videos.forEach(video => {
     observer.observe(video);
 });
 
-
-const feed = document.querySelector(".post-feed");
 
 let isScrolling = false;
 
