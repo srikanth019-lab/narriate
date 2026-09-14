@@ -39,6 +39,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
 <div class="reel" id="post-{{ post.id }}" data-post-id="{{ post.id }}">
     
+
+ <!-- Story progress -->
+    <div class="story-progress">
+        <div class="story-progress-fill"></div>
+    </div>
+
+
 {% if post.media_type == "video" %}
     <video
         class="full-video"

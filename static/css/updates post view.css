@@ -521,3 +521,24 @@ body {
 .delete-video-btn:hover {
     background: rgba(255, 255, 255, 0.12);
 }
+
+
+
+.story-progress {
+    position: absolute;
+    top: 10px;
+    left: 8px;
+    right: 8px;
+    height: 3px;
+    background: rgba(255, 255, 255, 0.35);
+    border-radius: 10px;
+    overflow: hidden;
+    z-index: 20;
+}
+
+.story-progress-fill {
+    width: 0%;
+    height: 100%;
+    background: white;
+    border-radius: 10px;
+}

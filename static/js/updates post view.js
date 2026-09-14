@@ -5,6 +5,114 @@ document.addEventListener("DOMContentLoaded", () => {
 
 const videos = document.querySelectorAll(".full-video");
 
+let progressAnimation = null;
+
+function startProgress(reel) {
+
+    const fill = reel.querySelector(".story-progress-fill");
+    const media = reel.querySelector(".full-video");
+
+    console.log("PROGRESS STARTED");
+    console.log("ACTIVE:", reel.classList.contains("active"));
+    console.log("MEDIA:", media);
+    console.log("MEDIA TYPE:", media ? media.tagName : "NONE");
+
+    if (!fill || !media) {
+        console.log("Progress elements missing");
+        return;
+    }
+
+    if (progressAnimation) {
+        cancelAnimationFrame(progressAnimation);
+        progressAnimation = null;
+    }
+
+    fill.style.width = "0%";
+
+    // ================================
+    // VIDEO
+    // ================================
+    if (media.tagName === "VIDEO") {
+
+        console.log(
+    "VIDEO STATE:",
+    "duration =", media.duration,
+    "currentTime =", media.currentTime,
+    "paused =", media.paused
+);
+
+        const updateVideoProgress = () => {
+
+            if (!reel.classList.contains("active")) {
+                return;
+            }
+
+            if (media.duration && !media.paused) {
+
+                const percent =
+                    (media.currentTime / media.duration) * 100;
+
+                fill.style.width = percent + "%";
+
+                console.log(
+                    "VIDEO PROGRESS:",
+                    percent.toFixed(1) + "%"
+                );
+            }
+
+            progressAnimation =
+                requestAnimationFrame(updateVideoProgress);
+        };
+
+        updateVideoProgress();
+
+        return;
+    }
+
+
+    // ================================
+    // IMAGE = 5 SECONDS
+    // ================================
+
+    const startTime = performance.now();
+
+    const updateImageProgress = (currentTime) => {
+
+        if (!reel.classList.contains("active")) {
+            return;
+        }
+
+        const elapsed =
+            currentTime - startTime;
+
+        const percent =
+            (elapsed / 5000) * 100;
+
+        fill.style.width =
+            Math.min(percent, 100) + "%";
+
+        console.log(
+            "IMAGE PROGRESS:",
+            percent.toFixed(1) + "%"
+        );
+
+        if (elapsed >= 5000) {
+
+            fill.style.width = "100%";
+
+            console.log("IMAGE FINISHED");
+
+            return;
+        }
+
+        progressAnimation =
+            requestAnimationFrame(updateImageProgress);
+    };
+
+    progressAnimation =
+        requestAnimationFrame(updateImageProgress);
+}
+
 
 // ========================================
 // TAP CONTROLS
@@ -25,6 +133,12 @@ const currentPost = document.getElementById(`post-${currentPostId}`);
 if (currentPost) {
     currentPost.classList.add("active");
 }
+
+
+if (currentPost) {
+    startProgress(currentPost);
+}
+
 
 reels.forEach((reel, index) => {
 
@@ -61,36 +175,69 @@ reels.forEach((reel, index) => {
         // LEFT 40% → PREVIOUS
         // -------------------------------
 
-       if (tapPercent < 0.40) {
-    console.log("LEFT DETECTED", index);
+        if (tapPercent < 0.40) {
+            console.log("LEFT DETECTED", index);
 
-    if (index > 0) {
-        console.log("GOING PREVIOUS");
-        
-        reels[index - 1].classList.add("active");
-        reel.classList.remove("active");
-    } else {
-        console.log("ALREADY FIRST REEL");
-    }
+            if (index > 0) {
+                console.log("GOING PREVIOUS");
 
-    return;
-}
+                reel.classList.remove("active");
 
+                const previousReel = reels[index - 1];
 
-if (tapPercent > 0.60) {
-    console.log("RIGHT DETECTED", index);
+                previousReel.classList.add("active");
 
-    if (index < reels.length - 1) {
-        console.log("GOING NEXT");
+                const previousVideo = previousReel.querySelector("video.full-video");
 
-       reels[index + 1].classList.add("active");
-       reel.classList.remove("active");
-    } else {
-        console.log("ALREADY LAST REEL");
-    }
+                if (previousVideo) {
+                    previousVideo.currentTime = 0;
 
-    return;
-}
+                    previousVideo.play().catch(error => {
+                        console.log("Play failed:", error);
+                    });
+                }
+
+                startProgress(previousReel);
+            } else {
+                console.log("ALREADY FIRST REEL");
+            }
+
+            return;
+        }
+
+        // -------------------------------
+        // RIGHT 40% → NEXT
+        // -------------------------------
+
+        if (tapPercent > 0.60) {
+            console.log("RIGHT DETECTED", index);
+
+            if (index < reels.length - 1) {
+                console.log("GOING NEXT");
+
+                reel.classList.remove("active");
+
+                const nextReel = reels[index + 1];
+
+                nextReel.classList.add("active");
+
+                const nextVideo = nextReel.querySelector("video.full-video");
+
+                if (nextVideo) {
+                    nextVideo.currentTime = 0;
+
+                    nextVideo.play().catch(error => {
+                        console.log("Play failed:", error);
+                    });
+                }
+
+                startProgress(nextReel);
+            } else {
+                console.log("ALREADY LAST REEL");
+            }
+
+            return;
+        }
 
         // -------------------------------
         // CENTER 20% → PLAY / PAUSE
@@ -114,9 +261,8 @@ if (tapPercent > 0.60) {
 
         }
 
-    });
-
 });
+
 
 
 
@@ -407,6 +553,7 @@ window.deleteVideo = deleteVideo;
 window.deleteHapps = deleteHapps;
 window.toggleVideoMenu = toggleVideoMenu;
 
+});
 });
 
 
