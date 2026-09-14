@@ -916,15 +916,30 @@ def updates():
             Follow.follower_id == logged_in_user_id
         ).subquery()
 
-        video_posts = updatesPost.query.filter(
+        all_video_posts = updatesPost.query.filter(
             updatesPost.status == "ready",
+            updatesPost.happs_deleted == False,
             updatesPost.status_expires_at > datetime.utcnow(),
             updatesPost.user_id.in_(following_ids)
         ).order_by(
             updatesPost.created_at.desc()
         ).all()
 
-    my_uploads = video_posts
+        # ONLY ONE HAPP PER USER
+        latest_by_user = {}
+
+        for post in all_video_posts:
+            if post.user_id not in latest_by_user:
+                latest_by_user[post.user_id] = post
+
+        video_posts = list(latest_by_user.values())
+
+        # Newest Happ first
+        video_posts.sort(
+            key=lambda post: post.created_at,
+            reverse=True
+        )
+        my_uploads = video_posts
 
     return render_template(
         "updates.html",
