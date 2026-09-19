@@ -1,7 +1,7 @@
 # =======================
 # 1️⃣ IMPORTS
 # =======================
-from flask import abort
+from flask import Response, abort
 from typing import Any
 from datetime import datetime, timedelta
 from flask import request
@@ -1237,5 +1237,39 @@ def ist_time(dt):
 
 
 
+
+
+@app.route("/sitemap.xml")
+def sitemap():
+    users = User.query.with_entities(User.username).all()
+
+    pages = []
+
+    for user in users:
+        pages.append(
+            url_for(
+                "view_profile",
+                username=user.username,
+                _external=True
+            )
+        )
+
+    xml = '<?xml version="1.0" encoding="UTF-8"?>\n'
+    xml += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+
+    for page in pages:
+        xml += '  <url>\n'
+        xml += f'    <loc>{page}</loc>\n'
+        xml += '  </url>\n'
+
+    xml += '</urlset>'
+
+    return Response(xml, mimetype="application/xml")
+
+
+
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
+
+
